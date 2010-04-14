@@ -1,0 +1,341 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>droplist</title>
+	<link rel="shortcut icon" type="image/x-icon" href="http://s1.trrsf.com.br/favicon.ico" />
+	<link rel="stylesheet" media="screen" type="text/css" href="http://s1.trrsf.com.br/atm/3/core/_css/core.css" />
+	<link rel="stylesheet" type="text/css" href="_css/context.css" />
+	<script type="text/javascript" charset="utf-8" src="http://s1.trrsf.com.br/atm/3/core/_js/jquery.js"></script>
+	<script type="text/javascript" charset="utf-8" src="http://s1.trrsf.com.br/atm/3/core/_js/jquery.mousewheel.js"></script>
+	<script type="text/javascript" charset="utf-8" src="http://s1.trrsf.com.br/atm/3/core/_js/jquery.jScrollPane.js"></script>
+	<script type="text/javascript" charset="utf-8" src="_js/jquery.droplist.js"></script>
+	
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+		
+			var settings = {
+				customScroll: true,
+				height: 150
+			}
+		
+			// BY LIST
+			jQuery('.droplist-by-list').droplist(settings, function() {
+				var that = this;
+				that.list.find('li').bind('click', function() {
+					console.log(this);
+					that.set(this);
+					console.log(that);
+					return false;
+				});
+			});
+			
+			
+			// BY LIST -  TABS
+			jQuery('.droplist-by-list-tabs').droplist(settings, function() {
+				this.tabs();
+			});
+			
+			
+			// BY LIST - DROPLISTCHANGE
+			jQuery('.droplist-by-list-onchange').droplist(settings, function() {
+				var that = this;
+				that.list.find('a').bind('click', function() {
+					var item = $(this).parent();
+					that.set(item);
+					return false;
+				});
+			}).bind('droplistchange', function() {
+				var val = $(this).data('droplist').get();
+				alert('changed to ' + val);
+			});
+			
+			
+			// BY SELECT
+			jQuery('.droplist-by-select').droplist(settings);
+			
+			
+			// BY SELECT - COMBOBOXCHANGE
+			jQuery('.droplist-by-select-onchange').droplist(settings).bind('droplistchange', function() {
+				var val = $(this).data('droplist').get();
+				alert('changed to ' + val);
+			});
+		
+		});
+	</script>
+	
+</head>
+<body class="LNG_pt LNG_pt-BR RGN_BR">
+
+	<div class="col">
+	
+		<h1 class="ttl-main">Testes com listas</h1>
+
+		<div class="lin-hor-dotted"><hr /></div>
+
+		<h2 class="ttl-subtitle">Combo simples</h2>
+		<ul class="droplist droplist-by-list">
+			<li><a href="http://www.terra.com.br">Terra</a></li>
+			<li><a href="http://www.uol.com.br">UOL</a></li>
+			<li><a href="http://www.globo.com.br">Globo</a></li>
+			<li><a href="http://www.ig.com.br">IG</a></li>
+		</ul>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<h2 class="ttl-subtitle">Combo com "title"</h2>
+		<ul class="droplist droplist-by-list" title="Selecione um item">
+			<li><a href="http://www.terra.com.br">Terra</a></li>
+			<li><a href="http://www.uol.com.br">UOL</a></li>
+			<li><a href="http://www.globo.com.br">Globo</a></li>
+			<li><a href="http://www.ig.com.br">IG</a></li>
+		</ul>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<h2 class="ttl-subtitle">Combo com texto longo</h2>
+		<ul class="droplist droplist-by-list">
+			<li><a href="http://www.terra.com.br">Aqui vai um texto muito longo, mas muuuuuuuuuuuuuuuuuito longo</a></li>
+			<li><a href="http://www.uol.com.br">UOL</a></li>
+			<li><a href="http://www.globo.com.br">Globo</a></li>
+			<li><a href="http://www.ig.com.br">IG</a></li>
+		</ul>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<h2 class="ttl-subtitle">Combo com item selecionado</h2>
+		<ul class="droplist droplist-by-list">
+			<li><a href="http://www.terra.com.br">Terra</a></li>
+			<li  class="selected"><a href="http://www.uol.com.br">UOL</a></li>
+			<li><a href="http://www.globo.com.br">Globo</a></li>
+			<li><a href="http://www.ig.com.br">IG</a></li>
+		</ul>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<h2 class="ttl-subtitle">Combo com subitems</h2>
+		<ul class="droplist droplist-by-list">
+			<li>
+				<a href="#">1</a>
+				<ul>
+					<li><a href="#">1.1</a></li>
+					<li><a href="#">1.2</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="#">2</a>
+				<ul>
+					<li><a href="#">2.1</a></li>
+					<li><a href="#">2.2</a></li>
+					<li><a href="#">2.3</a></li>
+				</ul>
+			</li>
+		</ul>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<h2 class="ttl-subtitle">Combo com custom scroll</h2>
+		<ul class="droplist droplist-by-list">
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+			<li><a href="#">aaa</a></li>
+		</ul>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<h2 class="ttl-subtitle">Combo com listener "onchange"</h2>
+		<ul class="droplist droplist-by-list-onchange">
+			<li><a href="http://www.terra.com.br">Terra</a></li>
+			<li><a href="http://www.uol.com.br">UOL</a></li>
+			<li><a href="http://www.globo.com.br">Globo</a></li>
+			<li><a href="http://www.ig.com.br">IG</a></li>
+		</ul>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<h2 class="ttl-subtitle">Combo com callback (tabs)</h2>
+		<ul class="droplist droplist-by-list-tabs">
+			<li><a href="#ctn-terra">Terra</a></li>
+			<li><a href="#ctn-uol">UOL</a></li>
+			<li><a href="#ctn-globo">Globo</a></li>
+			<li><a href="#ctn-ig">IG</a></li>
+		</ul>
+		<div id="combo-tabs">
+			<div id="ctn-terra" class="hide">Terra Terra Terra Terra</div>
+			<div id="ctn-uol" class="hide">UOL UOL UOL UOL</div>
+			<div id="ctn-globo" class="hide">Globo Globo Globo Globo</div>
+			<div id="ctn-ig" class="hide">IG IG IG IG</div>
+		</div>
+
+	</div>
+	
+	<div class="col">
+	
+		<h1 class="ttl-main">Testes com tag select</h1>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+
+		<h2 class="ttl-subtitle">Combo simples</h2>
+		<form method="get" action="">
+			<select name="combo" class="droplist droplist-by-select">
+				<option value="0">Terra</option>
+				<option value="1">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+			</select>
+		</form>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+
+		<h2 class="ttl-subtitle">Combo com "title"</h2>
+		<form method="get" action="">
+			<select name="combo" class="droplist droplist-by-select" title="Texto qualquer">
+				<option value="0">Terra</option>
+				<option value="1">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+			</select>
+		</form>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+
+		<h2 class="ttl-subtitle">Combo com texto longo</h2>
+		<form method="get" action="">
+			<select name="combo" class="droplist droplist-by-select">
+				<option value="0">Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra Terra </option>
+				<option value="1">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+			</select>
+		</form>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+
+		<h2 class="ttl-subtitle">Combo com item selecionado</h2>
+		<form method="get" action="">
+			<select name="combo" class="droplist droplist-by-select">
+				<option value="0">Terra</option>
+				<option value="1" selected="selected">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+			</select>
+		</form>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+
+		<h2 class="ttl-subtitle">Combo com subitens (optgroup)</h2>
+		<form method="get" action="">
+			<select name="combo" class="droplist droplist-by-select">
+				<optgroup label="Rio Grande do Sul">
+					<option value="POA">Porto Alegre</option>
+					<option value="NMT">Não-Me-Toque</option>
+				</optgroup>
+				<optgroup label="Mato Grosso">
+					<option value="CUI">Cuiabá</option>
+					<option value="RON" selected="selected">Rondonópolis</option>
+				</optgroup>
+			</select>
+		</form>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+
+		<h2 class="ttl-subtitle">Combo com custom scroll</h2>
+		<form method="get" action="">
+			<select name="combo" class="droplist droplist-by-select">
+				<option value="0">Terra</option>
+				<option value="1" selected="selected">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+				<option value="0">Terra</option>
+				<option value="1" selected="selected">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+				<option value="0">Terra</option>
+				<option value="1" selected="selected">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+				<option value="0">Terra</option>
+				<option value="1" selected="selected">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+				<option value="0">Terra</option>
+				<option value="1" selected="selected">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+				<option value="0">Terra</option>
+				<option value="1" selected="selected">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+				<option value="0">Terra</option>
+				<option value="1" selected="selected">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+			</select>
+		</form>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<h2 class="ttl-subtitle">Combo com listener "onchange"</h2>
+		<form method="get" action="">
+			<select name="combo" class="droplist droplist-by-select-onchange">
+				<option value="0">Terra</option>
+				<option value="1">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+			</select>
+		</form>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<h2 class="ttl-subtitle">Combo com submit (method=get)</h2>
+		<form method="get" action="index.html">
+			<select name="combo" class="droplist droplist-by-select">
+				<option value="0">Terra</option>
+				<option value="1">UOL</option>
+				<option value="2">Globo</option>
+				<option value="3">IG</option>
+			</select>
+			<input type="submit" name="action" value="Send" />
+		</form>
+		
+	
+	</div>
+	
+	<div class="lin-hor-dotted"><hr /></div>
+	<div class="lin-hor-dotted"><hr /></div>
+	<div class="lin-hor-dotted"><hr /></div>
+	<div class="lin-hor-dotted"><hr /></div>
+	<div class="lin-hor-dotted"><hr /></div>
+	<div class="lin-hor-dotted"><hr /></div>
+		
+</body>
+</html>
