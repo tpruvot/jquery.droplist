@@ -1,3 +1,4 @@
+/* v0.1 - 2010-40-18 00:27 */
 (function($) {
 
 	var DropList = function(el, settings, callback) {

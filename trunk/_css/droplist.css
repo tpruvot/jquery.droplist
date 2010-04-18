@@ -1,6 +1,5 @@
-.hide { display:none; }
-
 /* DropList */
+.hide { display:none; }
 .droplist { position:relative; color:#FFFFFF; font-size:11px; font-weight:bold; margin:0; padding:0; min-width:40px; max-width:320px; }
 .droplist .droplist-value { position:relative; line-height:17px; height:17px; cursor:pointer; z-index:3003; }
 .droplist .droplist-value div { display:block; float:left; height:17px; padding-left:6px; margin-right:1px; color:#FFF; background:url(../_img/droplist.png) 0 -30px no-repeat; overflow:hidden; }
@@ -9,19 +8,19 @@
 .droplist-active div { background-position:0 -60px !important; outline:none; }
 .droplist a:focus ~ div { background-position:0 -60px !important; outline:none; } /* keep isolated from previous selector, 'cause IE6 has a bug */
 .droplist-active a, .droplist a:focus { background-position:-60px -90px !important; }
-.droplist .droplist-list { position:absolute; top:14px; padding:4px; border:3px solid #FF9900; background:#FFF; z-index:3002; }
+.droplist .droplist-list { position:absolute; top:14px; padding:4px; border:3px solid #F30B5C; background:#FFF; z-index:3002; }
 .droplist:focus .droplist-list { display:block; }
 .droplist-up .droplist-list { top:auto; bottom:14px; }
 .droplist .droplist-list ul li { _height:0; }
 .droplist .droplist-list ul li a, .droplist .droplist-list ul li strong { display:block; padding:4px 10px; color:#47423A; text-decoration:none; }
 .droplist .droplist-list ul li a:hover, .droplist .droplist-list ul li a:focus { text-decoration:underline; }
 .droplist .droplist-list ul li ul li a {color:#BEB7AF; padding:2px 10px 2px 20px; }
-.droplist .droplist-list ul li ul li a:hover {color:#FF9900;}
+.droplist .droplist-list ul li ul li a:hover {color:#F30B5C;}
 
 /* jScrollPane */
 .jScrollPaneContainer { position:relative; overflow:hidden; z-index:1; }
 .jScrollPaneTrack { position:absolute; cursor:pointer; right:0; top:0; height:100%; background:#ACA299; width:2px !important; right:2px; }
-.jScrollPaneDrag { position:absolute; background:#FF9900; cursor:pointer; overflow:hidden; width:6px !important; margin-left:-2px; }
+.jScrollPaneDrag { position:absolute; background:#F30B5C; cursor:pointer; overflow:hidden; width:6px !important; margin-left:-2px; }
 .jScrollPaneDragTop { position:absolute; top:0; left:0; }
 .jScrollPaneDragBottom { position:absolute; bottom:0; left:0; overflow:hidden; }
 a.jScrollArrowUp { display:block; position:absolute; z-index:1; top:0; right:0; text-indent:-2000px; overflow:hidden; height:9px; }
