@@ -23,6 +23,7 @@ h1 { font-size:20px; margin:0 0 20px 0; }
 
 .col { width:30%; padding:0 0 0 5%; float:left; }
 .col h2 { margin:0 0 0.5em 0; }
+.col .droplist { width:300px; }
 .col select { width:100%; }
 
 .sample { margin:0 0 20px 0; }
