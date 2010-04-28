@@ -12,9 +12,7 @@ function samples() {
 	jQuery('.droplist-by-list').droplist(settings, function() {
 		var that = this;
 		that.list.find('li').bind('click', function() {
-			console.log(this);
 			that.set(this);
-			console.log(that);
 			return false;
 		});
 	});
