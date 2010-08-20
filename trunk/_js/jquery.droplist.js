@@ -59,20 +59,46 @@
 				self.wrapper.addClass('droplist-up');
 			}
 			
-			// clickout and ESC key
+			// events (clickout / ESC key / type-ahead)
+			self.listItems = self.list.find('li');
+			self.typedKeys = '';
+			
 			$('html').bind('click', function (e) {
+				
+				// clickout
 				if ($(e.target).closest('.droplist').length === 0) {
 					self.close();
 				}
+			
 			}).bind('keyup', function (e) {
-				if (e == null) { // ie
+				
+				if (e === null) { // ie
 					keycode = event.keyCode;
-				} else { // mozilla
+				}
+				else { // mozilla
 					keycode = e.which;
 				}
-				if(keycode == 27){ // close
+			
+				// esc
+				if (keycode == 27) {
 					self.close();
-				}	
+				} 
+				
+				// type-ahead support
+				else if ((keycode >= 0x30 && keycode <= 0x7a)) {
+					self.typedKeys += '' + String.fromCharCode(keycode);
+					clearTimeout(self.typeDelay);
+					self.typeDelay = setTimeout(function () {
+						self.listItems.each(function () {
+							if ($(this).find('>a').text().toUpperCase().indexOf(self.typedKeys) === 0) {
+								self.set($(this));
+								return false;
+							}
+						});
+						self.typedKeys = '';
+					}, 400);
+				}
+			
 			});
 		
 		};
@@ -84,7 +110,8 @@
 		};
 		
 		self.set = function (el) {
-			var str = $(el).text();
+			
+			var str = $(el).find('>a').text();
 			setText(str);
 			self.list.find('li').removeClass('selected').filter(el).addClass('selected');
 		
@@ -135,7 +162,7 @@
 		// if it is a select tag
 		if (self.list.length === 0) {
 			isInsideForm = true;
-			var html,
+				var html = '',
 				optgroups = self.listWrapper.find('select:first optgroup'),
 				options;
 			if (optgroups.length > 0) {
@@ -211,7 +238,7 @@
 	};
 
 	// extend jQuery
-	$.fn.droplist = function (settings, callback){
+	$.fn.droplist = function (settings, callback) {
 		return this.each(function (){
 			var obj = $(this);
 			if (obj.data('droplist')) return; // return early if this obj already has a plugin instance
