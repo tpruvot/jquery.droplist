@@ -1,7 +1,6 @@
-/* v0.1 - 2010-40-18 00:27 */
-(function($) {
+(function ($) {
 
-	var DropList = function(el, settings, callback) {
+	var DropList = function (el, settings, callback) {
 	
 		var self = this;
 		
@@ -16,8 +15,8 @@
 		}
 		
 		function customScroll() {
-			var h1 = settings.height || 150;
-			var h2 = self.listWrapper.height();
+			var h1 = settings.height || 150,
+				h2 = self.listWrapper.height();
 			if (h2 > h1) {
 				self.list.css('height', h1 + 'px').jScrollPane({showArrows:false});
 			}
@@ -28,11 +27,11 @@
 			self.option.css('width', (self.obj.width - self.drop.width() - self.option.outerWidth(true)) + 'px');
 		}
 		
-		var options2list = function(data) {
+		var options2list = function (data) {
 			var output = '<ul>';
-			data.each(function() {
+			data.each(function () {
 				var selected = $(this).attr('selected') ? 'selected' : '';
-				output += '<li class="' + selected +'"><a href="' + $(this).val() +'">' + $(this).text() + '</a></li>\t';
+				output += '<li class="' + selected +'"><a href="' + $(this).val() + '">' + $(this).text() + '</a></li>\t';
 			});
 			output += '</ul>';
 			return output;
@@ -41,31 +40,31 @@
 		
 		/* PUBLIC METHODS */
 		
-		self.open = function() {
+		self.open = function () {
 			
 			// just show
 			self.listWrapper.show();
 			self.wrapper.addClass('droplist-active');
 			
 			// auto direction
-			if (settings.direction == 'auto') {
-				var distanceFromBottom = (self.select.height() + self.wrapper.offset().top - $(document).scrollTop() - $(window).height()) * -1;
-				var objHeight = self.select.height() + self.listWrapper.height();
+			if (settings.direction === 'auto') {
+				var distanceFromBottom = (self.select.height() + self.wrapper.offset().top - $(document).scrollTop() - $(window).height()) * -1,
+					objHeight = self.select.height() + self.listWrapper.height();
 				if (distanceFromBottom < objHeight) {
 					self.wrapper.addClass('droplist-up');
 				} else {
 					self.wrapper.removeClass('droplist-up');
 				}
-			} else if (settings.direction == 'up') {
+			} else if (settings.direction === 'up') {
 				self.wrapper.addClass('droplist-up');
 			}
 			
 			// clickout and ESC key
-			$('html').bind('click', function(e) {
+			$('html').bind('click', function (e) {
 				if ($(e.target).closest('.droplist').length === 0) {
 					self.close();
 				}
-			}).bind('keyup', function(e){
+			}).bind('keyup', function (e) {
 				if (e == null) { // ie
 					keycode = event.keyCode;
 				} else { // mozilla
@@ -78,13 +77,13 @@
 		
 		};
 		
-		self.close = function() {
+		self.close = function () {
 			self.listWrapper.hide();
 			self.wrapper.removeClass('droplist-active');
 			$('html').unbind('click').unbind('keyup');
 		};
 		
-		self.set = function(el) {
+		self.set = function (el) {
 			var str = $(el).text();
 			setText(str);
 			self.list.find('li').removeClass('selected').filter(el).addClass('selected');
@@ -98,13 +97,13 @@
 			self.obj.trigger('droplistchange', self);
 		};
 		
-		self.get = function() {
+		self.get = function () {
 			return self.list.find('.selected:first a').attr('href');
 		};
 		
-		self.tabs = function() {
+		self.tabs = function () {
 			var that = this;
-			that.list.find('li').bind('click', function() {
+			that.list.find('li').bind('click', function () {
 				that.set(this);
 				var id = $(this).find('a').attr('href');
 				jQuery(id).removeClass('hide').show().siblings().hide();
@@ -136,17 +135,18 @@
 		// if it is a select tag
 		if (self.list.length === 0) {
 			isInsideForm = true;
-			var html = '';
-			var optgroups = self.listWrapper.find('select:first optgroup');
+			var html,
+				optgroups = self.listWrapper.find('select:first optgroup'),
+				options;
 			if (optgroups.length > 0) {
 				html += '<ul>';
-				optgroups.each(function() {
-					var options = $(this).find('option');
+				optgroups.each(function () {
+					options = $(this).find('option');
 					html += '<li><strong>' + $(this).attr('label') + '</strong>' + options2list(options) + '</li>';
 				});
 				html += '</ul>';
 			} else {
-				var options = self.listWrapper.find('select:first option');
+				options = self.listWrapper.find('select:first option');
 				html += options2list(options);
 			}
 			self.listWrapper.html(html);
@@ -170,7 +170,7 @@
 		// EVENTS
 		
 		// clicking on select
-		self.select.bind('click', function() {
+		self.select.bind('click', function () {
 			if (self.listWrapper.is(':hidden')) {
 				self.open();
 			} else {
@@ -180,7 +180,7 @@
 		
 		// clicking on an option inside a form
 		if (isInsideForm) {
-			self.list.find('a').bind('click', function() {
+			self.list.find('a').bind('click', function () {
 				var parent = $(this).parent();
 				self.set(parent);
 				return false;
@@ -211,8 +211,8 @@
 	};
 
 	// extend jQuery
-	$.fn.droplist = function(settings, callback){
-		return this.each(function(){
+	$.fn.droplist = function (settings, callback){
+		return this.each(function (){
 			var obj = $(this);
 			if (obj.data('droplist')) return; // return early if this obj already has a plugin instance
 			var instance = new DropList(this, settings, callback);
