@@ -63,6 +63,9 @@
 			self.listItems = self.list.find('li');
 			self.typedKeys = '';
 			
+			// focus selected item (auto scroll)
+			self.listItems.filter('.selected').first().focus();
+			
 			$('html').bind('click', function (e) {
 				
 				// clickout
@@ -188,7 +191,7 @@
 			self.wrapper.append('<input type="hidden" name="' + self.obj.name + '" value="" />');
 		}
 		
-		/* GET ELEMENTS */
+		// GET ELEMENTS
 		self.select = self.wrapper.find('.droplist-value:first');
 		self.option = self.select.find('div:first');
 		self.drop = self.select.find('a:first');
@@ -215,10 +218,12 @@
 		}
 		
 		// ADJUST LAYOUT (WIDTHS)
-		layout();	
+		layout();
 		
 		// CUSTOM SCROLL
-		if (settings.customScroll) { customScroll(); }
+		if (settings.customScroll) {
+			customScroll();
+		}
 		
 		// INITIAL STATE
 		
