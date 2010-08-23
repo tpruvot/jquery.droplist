@@ -59,12 +59,11 @@
 				self.wrapper.addClass('droplist-up');
 			}
 			
-			// events (clickout / ESC key / type-ahead)
-			self.listItems = self.list.find('li');
-			self.typedKeys = '';
-			
 			// focus selected item (auto scroll)
-			self.listItems.filter('.selected').first().focus();
+			self.listItems.filter('.selected:first').focus();
+			
+			// events (clickout / ESC key / type-ahead)
+			self.typedKeys = '';
 			
 			$('html').bind('click', function (e) {
 				
@@ -75,6 +74,7 @@
 			
 			}).bind('keyup', function (e) {
 				
+				// get keycode
 				if (e === null) { // ie
 					keycode = event.keyCode;
 				}
@@ -83,9 +83,14 @@
 				}
 			
 				// esc
-				if (keycode == 27) {
+				if (keycode === 27) {
 					self.close();
-				} 
+				}
+				
+				// space
+				else if (keycode === 32) {
+					self.set($('a:focus').parent());
+				}
 				
 				// type-ahead support
 				else if ((keycode >= 0x30 && keycode <= 0x7a)) {
@@ -93,8 +98,11 @@
 					clearTimeout(self.typeDelay);
 					self.typeDelay = setTimeout(function () {
 						self.listItems.each(function () {
-							if ($(this).find('>a').text().toUpperCase().indexOf(self.typedKeys) === 0) {
-								self.set($(this));
+							var a = $(this).find('>a');
+							if (a.text().toUpperCase().indexOf(self.typedKeys) === 0) {
+								self.listItems.removeClass('selected');
+								$(this).addClass('selected');
+								a.focus();
 								return false;
 							}
 						});
@@ -108,7 +116,7 @@
 		
 		self.close = function () {
 			self.listWrapper.hide();
-			self.wrapper.removeClass('droplist-active');
+			self.wrapper.removeClass('droplist-active')
 			$('html').unbind('click').unbind('keyup');
 		};
 		
@@ -116,7 +124,7 @@
 			
 			var str = $(el).find('>a').text();
 			setText(str);
-			self.list.find('li').removeClass('selected').filter(el).addClass('selected');
+			self.listItems.removeClass('selected').filter(el).addClass('selected');
 		
 			if (self.inputHidden.length > 0) {
 				var val = el.find('a').attr('href');
@@ -136,7 +144,7 @@
 			that.list.find('li').bind('click', function () {
 				that.set(this);
 				var id = $(this).find('a').attr('href');
-				jQuery(id).removeClass('hide').show().siblings().hide();
+				$(id).removeClass('hide').show().siblings().hide();
 				return false;
 			});
 		};
@@ -162,7 +170,7 @@
 		self.listWrapper = self.wrapper.find('.droplist-list:first');
 		self.list = self.listWrapper.find('ul:first');
 		
-		// if it is a select tag
+		// case it's a SELECT tag, not a UL
 		if (self.list.length === 0) {
 			isInsideForm = true;
 				var html = '',
@@ -192,6 +200,7 @@
 		}
 		
 		// GET ELEMENTS
+		self.listItems = self.list.find('li');
 		self.select = self.wrapper.find('.droplist-value:first');
 		self.option = self.select.find('div:first');
 		self.drop = self.select.find('a:first');
@@ -226,7 +235,6 @@
 		}
 		
 		// INITIAL STATE
-		
 		self.close();
 		
 		// set selected
