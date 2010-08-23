@@ -60,7 +60,7 @@
 			}
 			
 			// focus selected item (auto scroll)
-			self.listItems.filter('.selected:first').focus();
+			self.listItems.filter('.selected').focus();
 			
 			// events (clickout / ESC key / type-ahead)
 			self.typedKeys = '';
@@ -89,11 +89,13 @@
 				
 				// space
 				else if (keycode === 32) {
-					self.set($('a:focus').parent());
+					var focused = $('a:focus'),
+						current = (focused.parent().is('li')) ? focused.parent() : self.listItems.first();
+					self.set(current);
 				}
 				
 				// type-ahead support
-				else if ((keycode >= 0x30 && keycode <= 0x7a)) {
+				else if (keycode >= 0x30 && keycode <= 0x7a) {
 					self.typedKeys += '' + String.fromCharCode(keycode);
 					clearTimeout(self.typeDelay);
 					self.typeDelay = setTimeout(function () {
@@ -239,8 +241,12 @@
 		
 		// set selected
 		var selectedItem = self.list.find('.selected:first');
-		if (selectedItem.length === 1) { self.set(selectedItem); }
-		else { self.set(self.list.find('li:first')); }
+		if (selectedItem.length === 1) {
+			self.set(selectedItem);
+		}
+		else {
+			self.set(self.list.find('li:first'));
+		}
 		
 		// title
 		if (self.obj.title !== '') { setText(self.obj.title); }
