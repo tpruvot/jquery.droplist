@@ -1,21 +1,47 @@
-(function ($) {
+/* v0.5 (forked by tanguy.pruvot@gmail.com from v0.3r16)
 
-	var DropList = function (el, settings, callback) {
+  http://code.google.com/p/droplist/
+
+  jQuery('.droplist').droplist();
+  
+  Files
+  JS
+   script/jquery.droplist.js
+   script/jquery.mousewheel.js (if using customScroll)
+   script/jquery.jScrollPane.js (if using customScroll)
+  CSS
+   script/droplist.css
+   script/images/droplist_alpha.png
+
+  v0.5 by tanguy.pruvot@gmail.com (28 Aug 2010) :
+   * Theme 22px + Fixes JS/CSS
+   + Fix IE8 href, using alt="<value>"
+   + Arrows,Page,End Key navigation / Enter,space to select
+   + Type ahead : next position and rotation
+   + Automatic onchange event from select tag
+   + Prevent event propagation on click and key nav.
+   + Automatic addClass("droplist") on <select>
+*/
+jQuery(function($) {
+
+	var DropList = function(el, settings, callback) {
 	
 		var self = this;
+		var initialized = false;
 		
 		//SETTINGS
 		settings = settings || {};
 		settings.direction = settings.direction || 'auto';
+		settings.customScroll = true;
 		
 		// PRIVATE METHODS
 		
 		function setText(str) {
-			self.option.html(str);
+			self.option.html(text2html(str));
 		}
 		
 		function customScroll() {
-			var h1 = settings.height || 150,
+			var h1 = settings.height || 220,
 				h2 = self.listWrapper.height();
 			if (h2 > h1) {
 				self.list.css('height', h1 + 'px').jScrollPane({showArrows:false});
@@ -24,14 +50,16 @@
 		
 		function layout() {
 			self.listWrapper.css('width', (self.obj.width - (self.listWrapper.outerWidth(true) - self.listWrapper.width())) + 'px');
-			self.option.css('width', (self.obj.width - self.drop.width() - self.option.outerWidth(true)) + 'px');
+			//self.option.css('width', (self.obj.width - self.drop.width() - self.option.outerWidth(true)) + 'px');
 		}
-		
+		var text2html = function (data) {
+			return data.replace("<","&lt;").replace(">","&gt;");
+		}
 		var options2list = function (data) {
 			var output = '<ul>';
 			data.each(function () {
 				var selected = $(this).attr('selected') ? 'selected' : '';
-				output += '<li class="' + selected +'"><a href="' + $(this).val() + '">' + $(this).text() + '</a></li>\t';
+				output += '<li class="' + selected +'"><a href="#" alt="' + $(this).val() +'">' + text2html($(this).text()) + '</a></li>\t';
 			});
 			output += '</ul>';
 			return output;
@@ -44,6 +72,15 @@
 			
 			// just show
 			self.listWrapper.show();
+			
+			// close other opened lists
+			var opened = $('html').find('.droplist-active');
+			if (opened !== null && opened.length > 0) {
+				opened.find('.droplist-list:first').hide();
+				opened.removeClass('droplist-active');
+				$('html').unbind('keydown');
+			}
+			
 			self.wrapper.addClass('droplist-active');
 			
 			// auto direction
@@ -60,7 +97,8 @@
 			}
 			
 			// focus selected item (auto scroll)
-			self.listItems.filter('.selected').focus();
+			if (settings.customScroll)
+				self.listItems.filter('.selected').focus();
 			
 			// events (clickout / ESC key / type-ahead)
 			self.typedKeys = '';
@@ -72,7 +110,10 @@
 					self.close();
 				}
 			
-			}).bind('keyup', function (e) {
+			}).bind('keydown', function (e) {
+
+				var curPos = -1;
+				var nextSelection=null;
 				
 				// get keycode
 				if (e === null) { // ie
@@ -82,44 +123,129 @@
 					keycode = e.which;
 				}
 			
-				// esc
-				if (keycode === 27) {
+				// esc/tab
+				if (keycode == 27 || keycode == 9) {
 					self.close();
 				}
 				
 				// space
-				else if (keycode === 32) {
-					var focused = $('a:focus'),
-						current = (focused.parent().is('li')) ? focused.parent() : self.listItems.first();
-					self.set(current);
-				}
+				//else if (keycode === 32) {
+				//	var focused = $('a:focus'),
+				//		current = (focused.parent().is('li')) ? focused.parent() : self.listItems.first();
+				//	self.set(current);
+				//}
 				
 				// type-ahead support
-				else if (keycode >= 0x30 && keycode <= 0x7a) {
-					self.typedKeys += '' + String.fromCharCode(keycode);
-					clearTimeout(self.typeDelay);
-					self.typeDelay = setTimeout(function () {
+				else if ((keycode >= 0x30 && keycode <= 0x7a)) {
+					
+					var newKey = '' + String.fromCharCode(keycode);
+					if (self.typedKeys != newKey)
+						self.typedKeys += newKey;
+					else {
+						//same key repeated, next element
+						curPos = self.listItems.filter('.selected').index();
+						if (curPos >= 0) {
+							nextSelection = self.listItems.eq(curPos+1);
+							if (nextSelection.find('>a').text().toUpperCase().indexOf(newKey) !== 0) {
+								nextSelection = null;
+								curPos = -1;
+							}
+							self.typedKeys = newKey;
+							clearTimeout(self.typeDelay);
+						}
+					}
+					if (curPos == -1) {
+						clearTimeout(self.typeDelay);
+						self.typeDelay = setTimeout(function () {
+							self.typedKeys = '';
+						}, 800);
 						self.listItems.each(function () {
-							var a = $(this).find('>a');
-							if (a.text().toUpperCase().indexOf(self.typedKeys) === 0) {
-								self.listItems.removeClass('selected');
-								$(this).addClass('selected');
-								a.focus();
+							if ($(this).find('>a').text().toUpperCase().indexOf(self.typedKeys) === 0) {
+								nextSelection = $(this);
 								return false;
 							}
 						});
-						self.typedKeys = '';
-					}, 400);
+					}
 				}
-			
+				
+				//down arrow
+				else if (keycode == 40) {
+					self.typedKeys = '';
+					curPos = self.listItems.filter('.selected').index();
+					if (curPos >= 0)
+						nextSelection = self.listItems.eq(curPos+1);
+					if (nextSelection === null || nextSelection.length === 0)
+						nextSelection = self.listItems.last();
+				}
+				//up arrow
+				else if (keycode == 38) {
+					self.typedKeys = '';
+					curPos = self.listItems.filter('.selected').index();
+					if (curPos > 0)
+						nextSelection = self.listItems.eq(curPos-1);
+					if (nextSelection === null || nextSelection.length === 0)
+						nextSelection = self.listItems.first();
+				}
+				//page down
+				else if (keycode == 34) {
+					self.typedKeys = '';
+					curPos = self.listItems.filter('.selected').index();
+					if (curPos >= 0) {
+						nextSelection = self.listItems.eq(curPos+10);
+						if (nextSelection === null || nextSelection.length === 0)
+							nextSelection = self.listItems.last();
+					}
+				}
+				//page up
+				else if (keycode == 33) {
+					self.typedKeys = '';
+					curPos = self.listItems.filter('.selected').index();
+					if (curPos >= 10)
+						nextSelection = self.listItems.eq(curPos-10);
+					else
+						nextSelection = self.listItems.first();
+				}
+				//home key
+				else if (keycode == 35) {
+					self.typedKeys = '';
+					nextSelection = self.listItems.last();
+				}
+				//end key
+				else if (keycode == 36) {
+					self.typedKeys = '';
+					nextSelection = self.listItems.first();
+				}
+				//enter,space : selection
+				else if (keycode == 13 || keycode == 32) {
+					self.typedKeys = '';
+					curPos = self.listItems.filter('.selected').index();
+					if (curPos >= 0) {
+						self.set(self.listItems.filter('.selected').first());
+						e.preventDefault();
+						return true;
+					}
+				}
+				else 
+					//alert(keycode);
+					return false;
+
+				if (nextSelection !== null) {
+					self.listItems.removeClass('selected');
+					nextSelection.addClass('selected').focus();
+					e.preventDefault();
+					return true;
+				}
+
+				return false;
+				
 			});
 		
 		};
 		
-		self.close = function () {
+		self.close = function() {
 			self.listWrapper.hide();
-			self.wrapper.removeClass('droplist-active')
-			$('html').unbind('click').unbind('keyup');
+			self.wrapper.removeClass('droplist-active');
+			$('html').unbind('click').unbind('keydown');
 		};
 		
 		self.set = function (el) {
@@ -129,24 +255,37 @@
 			self.listItems.removeClass('selected').filter(el).addClass('selected');
 		
 			if (self.inputHidden.length > 0) {
-				var val = el.find('a').attr('href');
+				var val = el.find('a').attr('alt');
 				self.inputHidden.attr('value', val);
 			}
 			
-			self.close();
-			self.obj.trigger('droplistchange', self);
+			if (self.initialized) {
+				self.close();
+				
+				if (self.obj.attr('onchange')) {
+					//set "this.value"
+					self.obj.val(self.get()); //firefox, chrome
+					self.obj.append( //IE8 doesnt want a value without selected <option>
+						$('<option selected="selected"></option>').val(self.get()).html('')
+					);
+					self.obj.trigger('onchange');
+				} else {
+					self.obj.trigger('droplistchange', self);
+				}
+			}
 		};
 		
 		self.get = function () {
-			return self.list.find('.selected:first a').attr('href');
+			return self.list.find('.selected:first a').attr('alt');
 		};
 		
 		self.tabs = function () {
 			var that = this;
-			that.list.find('li').bind('click', function () {
+			that.list.find('li').bind('click', function (e) {
 				that.set(this);
-				var id = $(this).find('a').attr('href');
-				$(id).removeClass('hide').show().siblings().hide();
+				var id = $(this).find('a').attr('alt');
+				jQuery(id).removeClass('hide').show().siblings().hide();
+				e.preventDefault();
 				return false;
 			});
 		};
@@ -165,7 +304,7 @@
 		var isInsideForm = false;
 		
 		// insert wrapper
-		var wrapperHtml = '<div class="' + self.obj.className + '"><div class="droplist-list"></div></div>';
+		var wrapperHtml = '<div class="' + self.obj.className + ' droplist"><div class="droplist-list"></div></div>';
 		
 		// get elements
 		self.wrapper = self.obj.removeAttr('class').wrap(wrapperHtml).parent().parent();
@@ -194,7 +333,7 @@
 		}
 		
 		// insert HTML into the wrapper
-		self.wrapper.prepend('<div class="droplist-value"><a href="#nogo"></a><div></div></div>');
+		self.wrapper.prepend('<div class="droplist-value"><div></div><a class="nogo" href="#nogo"></a></div>');
 		
 		// input hidden
 		if (isInsideForm) {
@@ -211,19 +350,22 @@
 		// EVENTS
 		
 		// clicking on select
-		self.select.bind('click', function () {
+		self.select.bind('click', function (e) {
 			if (self.listWrapper.is(':hidden')) {
 				self.open();
 			} else {
 				self.close();
 			}
+			e.preventDefault();
+			return true;
 		});
 		
 		// clicking on an option inside a form
 		if (isInsideForm) {
-			self.list.find('a').bind('click', function () {
+			self.list.find('a').bind('click', function (e) {
 				var parent = $(this).parent();
 				self.set(parent);
+				e.preventDefault();
 				return false;
 			});
 		}
@@ -253,6 +395,8 @@
 		
 		// CALLBACK
 		if (typeof callback == 'function') { callback.apply(self); }
+		
+		self.initialized = true;
 	
 	};
 
@@ -266,4 +410,4 @@
 		});
 	};
 
-})(jQuery);
+});
