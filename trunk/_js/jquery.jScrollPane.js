@@ -1,38 +1,42 @@
 /* Copyright (c) 2009 Kelvin Luck (kelvin AT kelvinluck DOT com || http://www.kelvinluck.com)
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) 
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
+ * 
  * See http://kelvinluck.com/assets/jquery/jScrollPane/
- * $Id: jScrollPane.js 90 2010-01-25 03:52:10Z kelvin.luck $
+ * $Id$
+ */
+
+/**
  * Replace the vertical scroll bars on any matched elements with a fancy
  * styleable (via CSS) version. With JS disabled the elements will
  * gracefully degrade to the browsers own implementation of overflow:auto.
  * If the mousewheel plugin has been included on the page then the scrollable areas will also
  * respond to the mouse wheel.
+ *
  * @example jQuery(".scroll-pane").jScrollPane();
+ *
  * @name jScrollPane
  * @type jQuery
  * @param Object	settings	hash with options, described below.
-
- * scrollbarWidth	-	The width of the generated scrollbar in pixels
-* scrollbarMargin	-	The amount of space to leave on the side of the scrollbar in pixels
-* wheelSpeed		-	The speed the pane will scroll in response to the mouse wheel in pixels
-* showArrows		-	Whether to display arrows for the user to scroll with
-* arrowSize		-	The height of the arrow buttons if showArrows=true
-* animateTo		-	Whether to animate when calling scrollTo and scrollBy
-* dragMinHeight	-	The minimum height to allow the drag bar to be
-* dragMaxHeight	-	The maximum height to allow the drag bar to be
-* animateInterval	-	The interval in milliseconds to update an animating scrollPane (default 100)
-* animateStep		-	The amount to divide the remaining scroll distance by when animating (default 3)
-* maintainPosition-	Whether you want the contents of the scroll pane to maintain it's position when you re-initialise it - so it doesn't scroll as you add more content (default true)
-* tabIndex		-	The tabindex for this jScrollPane to control when it is tabbed to when navigating via keyboard (default 0)
-* enableKeyboardNavigation - Whether to allow keyboard scrolling of this jScrollPane when it is focused (default true)
-* animateToInternalLinks - Whether the move to an internal link (e.g. when it's focused by tabbing or by a hash change in the URL) should be animated or instant (default false)
-* scrollbarOnLeft	-	Display the scrollbar on the left side?  (needs stylesheet changes, see examples.html)
-* reinitialiseOnImageLoad - Whether the jScrollPane should automatically re-initialise itself when any contained images are loaded (default false)
-* topCapHeight	-	The height of the "cap" area between the top of the jScrollPane and the top of the track/ buttons
-* bottomCapHeight	-	The height of the "cap" area between the bottom of the jScrollPane and the bottom of the track/ buttons
-* observeHash		-	Whether jScrollPane should attempt to automagically scroll to the correct place when an anchor inside the scrollpane is linked to (default true)
- 
+ *								scrollbarWidth	-	The width of the generated scrollbar in pixels
+ *								scrollbarMargin	-	The amount of space to leave on the side of the scrollbar in pixels
+ *								wheelSpeed		-	The speed the pane will scroll in response to the mouse wheel in pixels
+ *								showArrows		-	Whether to display arrows for the user to scroll with
+ *								arrowSize		-	The height of the arrow buttons if showArrows=true
+ *								animateTo		-	Whether to animate when calling scrollTo and scrollBy
+ *								dragMinHeight	-	The minimum height to allow the drag bar to be
+ *								dragMaxHeight	-	The maximum height to allow the drag bar to be
+ *								animateInterval	-	The interval in milliseconds to update an animating scrollPane (default 100)
+ *								animateStep		-	The amount to divide the remaining scroll distance by when animating (default 3)
+ *								maintainPosition-	Whether you want the contents of the scroll pane to maintain it's position when you re-initialise it - so it doesn't scroll as you add more content (default true)
+ *								tabIndex		-	The tabindex for this jScrollPane to control when it is tabbed to when navigating via keyboard (default 0)
+ *								enableKeyboardNavigation - Whether to allow keyboard scrolling of this jScrollPane when it is focused (default true)
+ *								animateToInternalLinks - Whether the move to an internal link (e.g. when it's focused by tabbing or by a hash change in the URL) should be animated or instant (default false)
+ *								scrollbarOnLeft	-	Display the scrollbar on the left side?  (needs stylesheet changes, see examples.html)
+ *								reinitialiseOnImageLoad - Whether the jScrollPane should automatically re-initialise itself when any contained images are loaded (default false)
+ *								topCapHeight	-	The height of the "cap" area between the top of the jScrollPane and the top of the track/ buttons
+ *								bottomCapHeight	-	The height of the "cap" area between the bottom of the jScrollPane and the bottom of the track/ buttons
+ *								observeHash		-	Whether jScrollPane should attempt to automagically scroll to the correct place when an anchor inside the scrollpane is linked to (default true)
  * @return jQuery
  * @cat Plugins/jScrollPane
  * @author Kelvin Luck (kelvin AT kelvinluck DOT com || http://www.kelvinluck.com)
@@ -135,8 +139,8 @@ $.fn.jScrollPane = function(settings)
 					});
 				};
 			}
-			
-			var p = this.originalSidePaddingTotal;
+
+			var p = (this.originalSidePaddingTotal)?this.originalSidePaddingTotal:0;
 			var realPaneWidth = paneWidth - settings.scrollbarWidth - settings.scrollbarMargin - p;
 
 			var cssToApply = {
@@ -223,8 +227,7 @@ $.fn.jScrollPane = function(settings)
 						}
 					);
 				}
-				
-				// showArrows
+
 				if (settings.showArrows) {
 					
 					var currentArrowButton;
@@ -297,7 +300,6 @@ $.fn.jScrollPane = function(settings)
 					var $upArrow = $('>.jScrollArrowUp', $container);
 					var $downArrow = $('>.jScrollArrowDown', $container);
 				}
-				// end showArrows
 				
 				if (settings.arrowSize) {
 					trackHeight = paneHeight - settings.arrowSize - settings.arrowSize;
@@ -337,16 +339,16 @@ $.fn.jScrollPane = function(settings)
 					mouseWheelMultiplier = 2 * settings.wheelSpeed * maxY / contentHeight;
 				};
 				
-				var onStartDrag = function(event) {
+				var onStartDrag = function(event)
+				{
 					initDrag();
 					dragMiddle = getPos(event, 'Y') - dragPosition - currentOffset.top;
-					$('html').bind('mouseup', onStopDrag).bind('mousemove', updateScroll);
+					$('html').bind('mouseup', onStopDrag).bind('mousemove', updateScroll).bind('mouseleave', onStopDrag)
 					if ($.browser.msie) {
 						$('html').bind('dragstart', ignoreNativeDrag).bind('selectstart', ignoreNativeDrag);
 					}
 					return false;
 				};
-				
 				var onStopDrag = function()
 				{
 					$('html').unbind('mouseup', onStopDrag).unbind('mousemove', updateScroll);
@@ -355,7 +357,6 @@ $.fn.jScrollPane = function(settings)
 						$('html').unbind('dragstart', ignoreNativeDrag).unbind('selectstart', ignoreNativeDrag);
 					}
 				};
-				
 				var positionDrag = function(destY)
 				{
 					$container.scrollTop(0);
@@ -371,7 +372,6 @@ $.fn.jScrollPane = function(settings)
 						$downArrow[destY == maxY ? 'addClass' : 'removeClass']('disabled');
 					}
 				};
-				
 				var updateScroll = function(e)
 				{
 					positionDrag(getPos(e, 'Y') - currentOffset.top - dragMiddle);
@@ -383,11 +383,9 @@ $.fn.jScrollPane = function(settings)
 					{'height':dragH+'px'}
 				).bind('mousedown', onStartDrag);
 				
-				
 				var trackScrollInterval;
 				var trackScrollInc;
 				var trackScrollMousePos;
-				
 				var doTrackScroll = function()
 				{
 					if (trackScrollInc > 8 || trackScrollInc%4==0) {
@@ -395,18 +393,15 @@ $.fn.jScrollPane = function(settings)
 					}
 					trackScrollInc ++;
 				};
-				
 				var onStopTrackClick = function()
 				{
 					clearInterval(trackScrollInterval);
 					$('html').unbind('mouseup', onStopTrackClick).unbind('mousemove', onTrackMouseMove);
 				};
-				
 				var onTrackMouseMove = function(event)
 				{
 					trackScrollMousePos = getPos(event, 'Y') - currentOffset.top - dragMiddle;
 				};
-				
 				var onTrackClick = function(event)
 				{
 					initDrag();
@@ -420,12 +415,11 @@ $.fn.jScrollPane = function(settings)
 				
 				$track.bind('mousedown', onTrackClick);
 				
-				
-				
 				$container.bind(
 					'mousewheel',
 					function (event, delta) {
-						delta = delta || (event.wheelDelta ? event.wheelDelta / 120 : (event.detail) ? -event.detail/3 : 0);
+						delta = delta || (event.wheelDelta ? event.wheelDelta / 120 : (event.detail) ?
+-event.detail/3 : 0);
 						initDrag();
 						ceaseAnimation();
 						var d = dragPosition;
@@ -447,7 +441,6 @@ $.fn.jScrollPane = function(settings)
 						ceaseAnimation();
 					}
 				}
-				
 				var ceaseAnimation = function()
 				{
 					if (_animateToInterval) {
@@ -455,8 +448,8 @@ $.fn.jScrollPane = function(settings)
 						delete _animateToPosition;
 					}
 				};
-			
-				var scrollTo = function(pos, preventAni) {
+				var scrollTo = function(pos, preventAni)
+				{
 					if (typeof pos == "string") {
 						// Legal hash values aren't necessarily legal jQuery selectors so we need to catch any
 						// errors from the lookup...
@@ -481,7 +474,6 @@ $.fn.jScrollPane = function(settings)
 						_animateToInterval = setInterval(animateToPosition, settings.animateInterval);
 					}
 				};
-				
 				$this[0].scrollTo = scrollTo;
 				
 				$this[0].scrollBy = function(delta)
@@ -495,7 +487,6 @@ $.fn.jScrollPane = function(settings)
 				scrollTo(-currentScrollPosition, true);
 			
 				// Deal with it when the user tabs to a link or form element within this scrollpane
-				/*
 				$('*', this).bind(
 					'focus',
 					function(event)
@@ -507,9 +498,14 @@ $.fn.jScrollPane = function(settings)
 						// of the focused element to the top of the scrollpane...
 						var eleTop = 0;
 						
+						var preventInfiniteLoop = 100;
+						
 						while ($e[0] != $this[0]) {
 							eleTop += $e.position().top;
 							$e = $e.offsetParent();
+							if (!preventInfiniteLoop--) {
+								return;
+							}
 						}
 						
 						var viewportTop = -parseInt($pane.css('top')) || 0;
@@ -523,8 +519,8 @@ $.fn.jScrollPane = function(settings)
 							scrollTo(destPos);
 						}
 					}
-				);
-				*/
+				)
+				
 				
 				if (settings.observeHash) {
 					if (location.hash && location.hash.length > 1) {
@@ -595,13 +591,19 @@ $.fn.jScrollPane = function(settings)
 					  .unbind('mouseup.jScrollPaneDragging');
 				   clearTextSelectionInterval();
 				}
-				
+
 				$container.bind('mousedown.jScrollPane', onSelectScrollMouseDown);
 				
 				$.jScrollPane.active.push($this[0]);
 				
-				
 			} else {
+				if (!this.originalPadding) {
+					//bug IE
+					$this.css({
+						'height':paneHeight+'px'
+					});
+				}
+				else
 				$this.css(
 					{
 						'height':paneHeight+'px',
@@ -642,8 +644,8 @@ $.fn.jScrollPaneRemove = function()
 }
 
 $.fn.jScrollPane.defaults = {
-	scrollbarWidth : 10,
-	scrollbarMargin : 5,
+	scrollbarWidth : 6,
+	scrollbarMargin : 0,
 	wheelSpeed : 18,
 	showArrows : false,
 	arrowSize : 0,

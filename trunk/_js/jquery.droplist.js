@@ -1,4 +1,4 @@
-/* v0.5 (forked by tanguy.pruvot@gmail.com from v0.3r16)
+/* v0.6 (forked by tanguy.pruvot@gmail.com from v0.3r16)
 
   http://code.google.com/p/droplist/
 
@@ -11,28 +11,33 @@
    script/jquery.jScrollPane.js (if using customScroll)
   CSS
    script/droplist.css
-   script/images/droplist_alpha.png
+   script/images/droplist_shadow.png
 
+  v0.6 by tanguy.pruvot@gmail.com (29 Aug 2010) :
+   + autoresize setting to reduce selectbox width when possible
+   + optgroup key navigation
+   + CSS cleanup
   v0.5 by tanguy.pruvot@gmail.com (28 Aug 2010) :
-   * Theme 22px + Fixes JS/CSS
-   + Fix IE8 href, using alt="<value>"
+   + Prevent event propagation on click and key nav.
+   + Automatic addClass("droplist") on <select>, 
+     allowing a simple jQuery('select').droplist();
+  v0.4 by tanguy.pruvot@gmail.com (23 Aug 2010) :
    + Arrows,Page,End Key navigation / Enter,space to select
    + Type ahead : next position and rotation
    + Automatic onchange event from select tag
-   + Prevent event propagation on click and key nav.
-   + Automatic addClass("droplist") on <select>
 */
-jQuery(function($) {
+(function ($) {
 
-	var DropList = function(el, settings, callback) {
+	var DropList = function (el, settings, callback) {
 	
 		var self = this;
 		var initialized = false;
 		
-		//SETTINGS
+		// DEFAULT SETTINGS
 		settings = settings || {};
 		settings.direction = settings.direction || 'auto';
 		settings.customScroll = true;
+		settings.autoresize = true;
 		
 		// PRIVATE METHODS
 		
@@ -50,16 +55,24 @@ jQuery(function($) {
 		
 		function layout() {
 			self.listWrapper.css('width', (self.obj.width - (self.listWrapper.outerWidth(true) - self.listWrapper.width())) + 'px');
-			//self.option.css('width', (self.obj.width - self.drop.width() - self.option.outerWidth(true)) + 'px');
+			if (!settings.autoresize) {
+				self.option.css('display','block');
+				self.option.css('float','left');
+				self.drop.css('display','block');
+				self.drop.css('float','right');
+				self.option.css('width', (self.obj.width - self.drop.width() - self.option.outerWidth(true)) + 'px');
+			}
 		}
 		var text2html = function (data) {
+			//fix incorrect chars in possible values
 			return data.replace("<","&lt;").replace(">","&gt;");
 		}
+		
 		var options2list = function (data) {
 			var output = '<ul>';
 			data.each(function () {
 				var selected = $(this).attr('selected') ? 'selected' : '';
-				output += '<li class="' + selected +'"><a href="#" alt="' + $(this).val() +'">' + text2html($(this).text()) + '</a></li>\t';
+				output += '<li class="' + selected +'"><a href="' + $(this).val() +'">' + text2html($(this).text()) + '</a></li>\t';
 			});
 			output += '</ul>';
 			return output;
@@ -112,44 +125,51 @@ jQuery(function($) {
 			
 			}).bind('keydown', function (e) {
 
-				var curPos = -1;
+				var curSel = self.listItems.filter('.selected');
+				var curPos = self.listItems.index(curSel);
 				var nextSelection=null;
 				
 				// get keycode
-				if (e === null) { // ie
+				if (e === null) { // old ie
 					keycode = event.keyCode;
 				}
-				else { // mozilla
+				else { // moz, webkit, ie8
 					keycode = e.which;
 				}
 			
 				// esc/tab
 				if (keycode == 27 || keycode == 9) {
 					self.close();
+					e.preventDefault();
+					return true;
 				}
 				
-				// space
-				//else if (keycode === 32) {
-				//	var focused = $('a:focus'),
-				//		current = (focused.parent().is('li')) ? focused.parent() : self.listItems.first();
-				//	self.set(current);
-				//}
+				//enter,space : selection
+				else if (keycode == 13 || keycode == 32) {
+					if (curPos >= 0) {
+						self.set(self.listItems.filter('.selected').first());
+						e.preventDefault();
+					} else {
+						var focused = self.list.filter('a:focus'),
+						current = (focused.parent().is('li')) ? focused.parent() : self.listItems.first();
+						self.set(current);
+					}
+					return true;
+				}
 				
 				// type-ahead support
 				else if ((keycode >= 0x30 && keycode <= 0x7a)) {
 					
 					var newKey = '' + String.fromCharCode(keycode);
-					if (self.typedKeys != newKey)
+					var searchFrom = 0;
+					if (self.typedKeys != newKey) {
+						curPos = -1;
 						self.typedKeys += newKey;
-					else {
+					} else {
 						//same key repeated, next element
-						curPos = self.listItems.filter('.selected').index();
 						if (curPos >= 0) {
-							nextSelection = self.listItems.eq(curPos+1);
-							if (nextSelection.find('>a').text().toUpperCase().indexOf(newKey) !== 0) {
-								nextSelection = null;
-								curPos = -1;
-							}
+							searchFrom = curPos+1;
+							curPos = -1;
 							self.typedKeys = newKey;
 							clearTimeout(self.typeDelay);
 						}
@@ -159,90 +179,70 @@ jQuery(function($) {
 						self.typeDelay = setTimeout(function () {
 							self.typedKeys = '';
 						}, 800);
-						self.listItems.each(function () {
+						self.listItems.slice(searchFrom).each(function () {
 							if ($(this).find('>a').text().toUpperCase().indexOf(self.typedKeys) === 0) {
 								nextSelection = $(this);
 								return false;
 							}
 						});
 					}
-				}
+
+				} else {
 				
-				//down arrow
-				else if (keycode == 40) {
 					self.typedKeys = '';
-					curPos = self.listItems.filter('.selected').index();
-					if (curPos >= 0)
-						nextSelection = self.listItems.eq(curPos+1);
-					if (nextSelection === null || nextSelection.length === 0)
-						nextSelection = self.listItems.last();
-				}
-				//up arrow
-				else if (keycode == 38) {
-					self.typedKeys = '';
-					curPos = self.listItems.filter('.selected').index();
-					if (curPos > 0)
-						nextSelection = self.listItems.eq(curPos-1);
-					if (nextSelection === null || nextSelection.length === 0)
-						nextSelection = self.listItems.first();
-				}
-				//page down
-				else if (keycode == 34) {
-					self.typedKeys = '';
-					curPos = self.listItems.filter('.selected').index();
-					if (curPos >= 0) {
-						nextSelection = self.listItems.eq(curPos+10);
+					
+					//down arrow
+					if (keycode == 40) {
+						if (curPos >= 0)
+							nextSelection = self.listItems.eq(curPos+1);
 						if (nextSelection === null || nextSelection.length === 0)
 							nextSelection = self.listItems.last();
 					}
-				}
-				//page up
-				else if (keycode == 33) {
-					self.typedKeys = '';
-					curPos = self.listItems.filter('.selected').index();
-					if (curPos >= 10)
-						nextSelection = self.listItems.eq(curPos-10);
-					else
-						nextSelection = self.listItems.first();
-				}
-				//home key
-				else if (keycode == 35) {
-					self.typedKeys = '';
-					nextSelection = self.listItems.last();
-				}
-				//end key
-				else if (keycode == 36) {
-					self.typedKeys = '';
-					nextSelection = self.listItems.first();
-				}
-				//enter,space : selection
-				else if (keycode == 13 || keycode == 32) {
-					self.typedKeys = '';
-					curPos = self.listItems.filter('.selected').index();
-					if (curPos >= 0) {
-						self.set(self.listItems.filter('.selected').first());
-						e.preventDefault();
-						return true;
+					//up arrow
+					else if (keycode == 38) {
+						if (curPos > 0)
+							nextSelection = self.listItems.eq(curPos-1);
+						if (nextSelection === null || nextSelection.length === 0)
+							nextSelection = self.listItems.first();
 					}
+					//page down
+					else if (keycode == 34) {
+						if (curPos >= 0) {
+							nextSelection = self.listItems.eq(curPos+10);
+							if (nextSelection === null || nextSelection.length === 0)
+								nextSelection = self.listItems.last();
+						}
+					}
+					//page up
+					else if (keycode == 33) {
+						if (curPos >= 10)
+							nextSelection = self.listItems.eq(curPos-10);
+						else
+							nextSelection = self.listItems.first();
+					}
+					//home key
+					else if (keycode == 36) {
+						nextSelection = self.listItems.first();
+					}
+					//end key
+					else if (keycode == 35) {
+						nextSelection = self.listItems.last();
+					}
+					
 				}
-				else 
-					//alert(keycode);
-					return false;
-
+	
 				if (nextSelection !== null) {
 					self.listItems.removeClass('selected');
 					nextSelection.addClass('selected').focus();
 					e.preventDefault();
-					return true;
+					return false;
 				}
 
-				return false;
-				
 			});
 		
 		};
 		
-		self.close = function() {
+		self.close = function () {
 			self.listWrapper.hide();
 			self.wrapper.removeClass('droplist-active');
 			$('html').unbind('click').unbind('keydown');
@@ -255,13 +255,12 @@ jQuery(function($) {
 			self.listItems.removeClass('selected').filter(el).addClass('selected');
 		
 			if (self.inputHidden.length > 0) {
-				var val = el.find('a').attr('alt');
+				var val = el.find('a').attr('href');
 				self.inputHidden.attr('value', val);
 			}
 			
 			if (self.initialized) {
 				self.close();
-				
 				if (self.obj.attr('onchange')) {
 					//set "this.value"
 					self.obj.val(self.get()); //firefox, chrome
@@ -273,17 +272,26 @@ jQuery(function($) {
 					self.obj.trigger('droplistchange', self);
 				}
 			}
+			
+			//set container width to div + dropdown bt width to prevent dropdown br
+			if (settings.autoresize) {
+				self.option.css('width','');
+				if (self.option.outerWidth(true) + self.drop.outerWidth(true) >= self.wrapper.width()) {
+					var wx = self.option.outerWidth(true) - self.option.width();
+					self.option.css('width',self.wrapper.width() - self.drop.outerWidth(true) - wx);
+				}
+			}
 		};
 		
 		self.get = function () {
-			return self.list.find('.selected:first a').attr('alt');
+			return self.list.find('.selected:first a').attr('href');
 		};
 		
 		self.tabs = function () {
 			var that = this;
 			that.list.find('li').bind('click', function (e) {
 				that.set(this);
-				var id = $(this).find('a').attr('alt');
+				var id = $(this).find('a').attr('href');
 				jQuery(id).removeClass('hide').show().siblings().hide();
 				e.preventDefault();
 				return false;
@@ -314,7 +322,7 @@ jQuery(function($) {
 		// case it's a SELECT tag, not a UL
 		if (self.list.length === 0) {
 			isInsideForm = true;
-				var html = '',
+			var html = '',
 				optgroups = self.listWrapper.find('select:first optgroup'),
 				options;
 			if (optgroups.length > 0) {
@@ -341,7 +349,7 @@ jQuery(function($) {
 		}
 		
 		// GET ELEMENTS
-		self.listItems = self.list.find('li');
+		self.listItems = self.list.find('li a').closest('li');
 		self.select = self.wrapper.find('.droplist-value:first');
 		self.option = self.select.find('div:first');
 		self.drop = self.select.find('a:first');
@@ -362,7 +370,7 @@ jQuery(function($) {
 		
 		// clicking on an option inside a form
 		if (isInsideForm) {
-			self.list.find('a').bind('click', function (e) {
+			self.list.find('li a').bind('click', function (e) {
 				var parent = $(this).parent();
 				self.set(parent);
 				e.preventDefault();
@@ -387,7 +395,7 @@ jQuery(function($) {
 			self.set(selectedItem);
 		}
 		else {
-			self.set(self.list.find('li:first'));
+			self.set(self.list.find('li a').closest('li:first'));
 		}
 		
 		// title
@@ -410,4 +418,4 @@ jQuery(function($) {
 		});
 	};
 
-});
+})(jQuery);
