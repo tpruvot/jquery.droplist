@@ -2,7 +2,8 @@
 
   http://code.google.com/p/droplist/
 
-  jQuery('.droplist').droplist();
+  jQuery('#mydiv select').droplist();
+  jQuery('#mydiv .droplist').data('droplist').setValue('xxx');
   
   Files
   JS
@@ -14,11 +15,11 @@
    script/images/droplist_shadow.png
 
   v0.7 by tanguy.pruvot@gmail.com (30 Aug 2010) :
-   + mousedown event for faster droplist opening, + js css pointer
+   + mousedown event for faster droplist opening
    + bind all "li a" to prevent IE page jump
    + added a "selected" setting to force initial value
    + added setValue() public method
-   * fix .data('droplist') when used on select, to close all opened
+   * fix .data('droplist') when used on select, also to close all opened
   v0.6 by tanguy.pruvot@gmail.com (30 Aug 2010) :
    + autoresize setting to reduce selectbox width when possible
    + optgroup key navigation
@@ -374,13 +375,15 @@
 		self.option = self.select.find('div:first');
 		self.drop = self.select.find('a:first');
 		self.inputHidden = self.wrapper.find('input[type=hidden]:first');
-				
+		
+		//if (isInsideForm) {
+		//  //we need to find a way to detect external change of select value via javascript
+		//	self.inputHidden.change(function (e) {
+		//		alert(e);
+		//	});
+		//}
+
 		// EVENTS
-		if (isInsideForm) {
-			self.inputHidden.change(function (e) {
-				alert(e);
-			});
-		}
 		
 		// clicking on selected value or dropdown button
 		self.zone.bind('mousedown', function (e) {
