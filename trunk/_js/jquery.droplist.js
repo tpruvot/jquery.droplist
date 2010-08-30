@@ -45,6 +45,7 @@
 		settings.direction = settings.direction || 'auto';
 		settings.customScroll = true;
 		settings.autoresize = true;
+		settings.selected = null;
 		
 		// PRIVATE METHODS
 		
@@ -418,7 +419,7 @@
 		self.close();
 				
 		// set selected item
-		if (settings.selected != null) {
+		if (settings.selected !== null) {
 			self.setValue(settings.selected);
 		}
 		else {
