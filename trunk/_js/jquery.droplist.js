@@ -1,4 +1,4 @@
-/* v0.6 (forked by tanguy.pruvot@gmail.com from v0.3r16)
+/* v0.7 (forked by tanguy.pruvot@gmail.com from v0.3r16)
 
   http://code.google.com/p/droplist/
 
@@ -13,7 +13,13 @@
    script/droplist.css
    script/images/droplist_shadow.png
 
-  v0.6 by tanguy.pruvot@gmail.com (29 Aug 2010) :
+  v0.7 by tanguy.pruvot@gmail.com (30 Aug 2010) :
+   + mousedown event for faster droplist opening, + js css pointer
+   + bind all "li a" to prevent IE page jump
+   + added a "selected" setting to force initial value
+   + added setValue() public method
+   * fix .data('droplist') when used on select, to close all opened
+  v0.6 by tanguy.pruvot@gmail.com (30 Aug 2010) :
    + autoresize setting to reduce selectbox width when possible
    + optgroup key navigation
    + CSS cleanup
@@ -31,7 +37,7 @@
 	var DropList = function (el, settings, callback) {
 	
 		var self = this;
-		var initialized = false;
+		var callTriggers = false;
 		
 		// DEFAULT SETTINGS
 		settings = settings || {};
@@ -79,7 +85,17 @@
 		};
 		
 		
-		/* PUBLIC METHODS */
+		// PUBLIC METHODS
+		
+		self.setValue = function (val, trigger) {
+			var item = self.listItems.find(">a[href='"+val+"']").closest('li');
+			if (item.length === 1 && self.get() != val) {
+				self.callTriggers = false;
+				if (trigger) self.callTriggers = true;
+				self.set(item);
+				self.callTriggers = true;
+			}
+		}
 		
 		self.open = function () {
 			
@@ -89,9 +105,10 @@
 			// close other opened lists
 			var opened = $('html').find('.droplist-active');
 			if (opened !== null && opened.length > 0) {
-				opened.find('.droplist-list:first').hide();
-				opened.removeClass('droplist-active');
-				$('html').unbind('keydown');
+				opened.data('droplist').close();
+				//opened.find('.droplist-list:first').hide();
+				//opened.removeClass('droplist-active');
+				//$('html').unbind('keydown');
 			}
 			
 			self.wrapper.addClass('droplist-active');
@@ -119,7 +136,7 @@
 			$('html').bind('click', function (e) {
 				
 				// clickout
-				if ($(e.target).closest('.droplist').length === 0) {
+				if ($(e.target).closest('.droplist').length === 0 || $(e.target).hasClass('droplist-value')) {
 					self.close();
 				}
 			
@@ -259,7 +276,7 @@
 				self.inputHidden.attr('value', val);
 			}
 			
-			if (self.initialized) {
+			if (self.callTriggers) {
 				self.close();
 				if (self.obj.attr('onchange')) {
 					//set "this.value"
@@ -300,7 +317,6 @@
 	
 	
 		// CONTROLLER
-		
 		self.obj = $(el);
 		self.obj.css('border','none');
 		
@@ -318,6 +334,9 @@
 		self.wrapper = self.obj.removeAttr('class').wrap(wrapperHtml).parent().parent();
 		self.listWrapper = self.wrapper.find('.droplist-list:first');
 		self.list = self.listWrapper.find('ul:first');
+		
+		//prevent temporary content drawing
+		//self.list.css('display','none');
 		
 		// case it's a SELECT tag, not a UL
 		if (self.list.length === 0) {
@@ -351,14 +370,20 @@
 		// GET ELEMENTS
 		self.listItems = self.list.find('li a').closest('li');
 		self.select = self.wrapper.find('.droplist-value:first');
+		self.zone   = self.select.find('div,a');
 		self.option = self.select.find('div:first');
 		self.drop = self.select.find('a:first');
 		self.inputHidden = self.wrapper.find('input[type=hidden]:first');
-		
+				
 		// EVENTS
+		if (isInsideForm) {
+			self.inputHidden.change(function (e) {
+				alert(e);
+			});
+		}
 		
-		// clicking on select
-		self.select.bind('click', function (e) {
+		// clicking on selected value or dropdown button
+		self.zone.bind('mousedown', function (e) {
 			if (self.listWrapper.is(':hidden')) {
 				self.open();
 			} else {
@@ -369,14 +394,14 @@
 		});
 		
 		// clicking on an option inside a form
-		if (isInsideForm) {
+		//if (isInsideForm) {
 			self.list.find('li a').bind('click', function (e) {
 				var parent = $(this).parent();
 				self.set(parent);
 				e.preventDefault();
-				return false;
+				return true;
 			});
-		}
+		//}
 		
 		// ADJUST LAYOUT (WIDTHS)
 		layout();
@@ -388,14 +413,17 @@
 		
 		// INITIAL STATE
 		self.close();
-		
-		// set selected
-		var selectedItem = self.list.find('.selected:first');
-		if (selectedItem.length === 1) {
-			self.set(selectedItem);
+				
+		// set selected item
+		if (settings.selected != null) {
+			self.setValue(settings.selected);
 		}
 		else {
-			self.set(self.list.find('li a').closest('li:first'));
+			var selectedItem = self.list.find('.selected');
+			if (selectedItem.length === 1)
+				self.set(selectedItem);
+			else
+				self.set(self.list.find('li a').closest('li:first'));
 		}
 		
 		// title
@@ -403,8 +431,12 @@
 		
 		// CALLBACK
 		if (typeof callback == 'function') { callback.apply(self); }
-		
-		self.initialized = true;
+
+		//reset temporary display:none
+		//self.list.css('display','');
+
+		//enable triggers
+		self.callTriggers = true;
 	
 	};
 
@@ -415,6 +447,8 @@
 			if (obj.data('droplist')) return; // return early if this obj already has a plugin instance
 			var instance = new DropList(this, settings, callback);
 			obj.data('droplist', instance);
+			//to keep data access on destroyed <select class=droplist>
+			instance.wrapper.data('droplist', instance);
 		});
 	};
 
