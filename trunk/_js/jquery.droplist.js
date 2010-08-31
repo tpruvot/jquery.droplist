@@ -1,4 +1,4 @@
-/* v0.7 (forked by tanguy.pruvot@gmail.com from v0.3r16)
+/* v0.8 (forked by tanguy.pruvot@gmail.com from v0.3r16)
 
   http://code.google.com/p/droplist/
 
@@ -14,13 +14,22 @@
    script/droplist.css
    script/images/droplist_shadow.png
 
+  v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
+   + width setting
+   + autoresize the whole container 
+   * fix autoresize false (default alex's droplist)
+   * fix selected setting if "0" or ""
+   * fix some events in IE
+   * fix list-up position
+   * fix sample console bug if not exists
+   * local settings vars
   v0.7 by tanguy.pruvot@gmail.com (30 Aug 2010) :
    + mousedown event for faster droplist opening
    + bind all "li a" to prevent IE page jump
    + added a "selected" setting to force initial value
    + added setValue() public method
    * fix .data('droplist') when used on select, also to close all opened
-  v0.6 by tanguy.pruvot@gmail.com (30 Aug 2010) :
+  v0.6 by tanguy.pruvot@gmail.com (29 Aug 2010) :
    + autoresize setting to reduce selectbox width when possible
    + optgroup key navigation
    + CSS cleanup
@@ -38,14 +47,23 @@
 	var DropList = function (el, settings, callback) {
 	
 		var self = this;
+		var maxWidth;
+		var autoresize;
+		var selected;
 		var callTriggers = false;
 		
-		// DEFAULT SETTINGS
 		settings = settings || {};
+		
+		// DEFAULT SETTINGS
 		settings.direction = settings.direction || 'auto';
-		settings.customScroll = true;
-		settings.autoresize = true;
-		settings.selected = null;
+		if (typeof(settings.customScroll) == "undefined") settings.customScroll = true;
+
+		self.autoresize = (settings.autoresize > 0);
+		self.selected = (typeof(settings.selected) == "undefined") ? null : settings.selected;
+		if (typeof(settings.width) !== "undefined") {
+			self.maxWidth = settings.width;
+			self.autoresize = false;
+		}
 		
 		// PRIVATE METHODS
 		
@@ -62,13 +80,15 @@
 		}
 		
 		function layout() {
-			self.listWrapper.css('width', (self.obj.width - (self.listWrapper.outerWidth(true) - self.listWrapper.width())) + 'px');
-			if (!settings.autoresize) {
+			self.listWrapper.css('width', (self.maxWidth - (self.listWrapper.outerWidth(true) - self.listWrapper.width())) + 'px');
+			if (!self.autoresize) {
+				self.wrapper.parent().css('clear','both');
 				self.option.css('display','block');
 				self.option.css('float','left');
 				self.drop.css('display','block');
-				self.drop.css('float','right');
-				self.option.css('width', (self.obj.width - self.drop.width() - self.option.outerWidth(true)) + 'px');
+				self.drop.css('float','left');
+				//self.select.css('width', (self.maxWidth - self.drop.width() - (self.option.outerWidth(true) - self.option.width())) + 'px');
+				self.option.css('width', (self.maxWidth - self.drop.width() - (self.option.outerWidth(true) - self.option.width())) + 'px');
 			}
 		}
 		var text2html = function (data) {
@@ -91,11 +111,13 @@
 		
 		self.setValue = function (val, trigger) {
 			var item = self.listItems.find(">a[href='"+val+"']").closest('li');
-			if (item.length === 1 && self.get() != val) {
+			if (item.length === 1) {
 				self.callTriggers = false;
-				if (trigger) self.callTriggers = true;
+				if (self.get() != val && trigger) self.callTriggers = true;
 				self.set(item);
 				self.callTriggers = true;
+			} else {
+				setText('');
 			}
 		}
 		
@@ -150,9 +172,9 @@
 				
 				// get keycode
 				if (e === null) { // old ie
-					keycode = event.keyCode;
-				}
-				else { // moz, webkit, ie8
+					e = event;
+					keycode = e.keyCode;
+				} else { // moz, webkit, ie8
 					keycode = e.which;
 				}
 			
@@ -169,6 +191,7 @@
 						self.set(self.listItems.filter('.selected').first());
 						e.preventDefault();
 					} else {
+						//to check...
 						var focused = self.list.filter('a:focus'),
 						current = (focused.parent().is('li')) ? focused.parent() : self.listItems.first();
 						self.set(current);
@@ -201,7 +224,7 @@
 						self.listItems.slice(searchFrom).each(function () {
 							if ($(this).find('>a').text().toUpperCase().indexOf(self.typedKeys) === 0) {
 								nextSelection = $(this);
-								return false;
+								return false; //exit each() only, not func.
 							}
 						});
 					}
@@ -226,11 +249,10 @@
 					}
 					//page down
 					else if (keycode == 34) {
-						if (curPos >= 0) {
+						if (curPos >= 0)
 							nextSelection = self.listItems.eq(curPos+10);
-							if (nextSelection === null || nextSelection.length === 0)
-								nextSelection = self.listItems.last();
-						}
+						if (nextSelection === null || nextSelection.length === 0)
+							nextSelection = self.listItems.last();
 					}
 					//page up
 					else if (keycode == 33) {
@@ -293,12 +315,21 @@
 			}
 			
 			//set container width to div + dropdown bt width to prevent dropdown br
-			if (settings.autoresize) {
+			if (self.autoresize) {
 				self.option.css('width','');
-				if (self.option.outerWidth(true) + self.drop.outerWidth(true) >= self.wrapper.width()) {
+				self.select.css('display','inline-block');
+				self.select.css('width',self.maxWidth);
+				if (self.option.outerWidth(true) + self.drop.outerWidth(true) >= self.maxWidth) {
 					var wx = self.option.outerWidth(true) - self.option.width();
-					self.option.css('width',self.wrapper.width() - self.drop.outerWidth(true) - wx);
+					self.option.css('width',self.maxWidth - self.drop.outerWidth(true) - wx);
 				}
+				self.select.css('width',self.option.outerWidth(true) + self.drop.outerWidth(true));
+
+				self.wrapper.css('display','inline-block');
+				self.wrapper.css('width',self.option.outerWidth(true) + self.drop.outerWidth(true));
+			} else {
+				var wx = self.option.outerWidth(true) - self.option.width();
+				self.option.css('width',self.maxWidth - self.drop.outerWidth(true) - wx);				
 			}
 		};
 		
@@ -324,8 +355,9 @@
 		
 		self.obj.className = self.obj.attr('class');
 		self.obj.name = self.obj.attr('name');
-		self.obj.width = self.obj.width();
 		self.obj.title = self.obj.attr('title');
+		self.obj.width = self.obj.width();
+		self.maxWidth = self.maxWidth || self.obj.width;
 		
 		var isInsideForm = false;
 		
@@ -386,6 +418,12 @@
 
 		// EVENTS
 		
+		// null function to prevent browser default events
+		function preventDefault (e) {
+			e.preventDefault();
+			return true;
+		}
+		
 		// clicking on selected value or dropdown button
 		self.zone.bind('mousedown', function (e) {
 			if (self.listWrapper.is(':hidden')) {
@@ -393,19 +431,21 @@
 			} else {
 				self.close();
 			}
-			e.preventDefault();
-			return true;
+			return preventDefault(e);
 		});
+		//cancel href #nogo jump
+		self.drop.click(preventDefault);
 		
 		// clicking on an option inside a form
-		//if (isInsideForm) {
-			self.list.find('li a').bind('click', function (e) {
-				var parent = $(this).parent();
-				self.set(parent);
-				e.preventDefault();
-				return true;
-			});
-		//}
+		self.list.find('li a').closest('li').click( function (e) {
+			self.set($(this));
+			return preventDefault(e);
+		});
+		//cancel href links
+		self.list.find('li a').click(preventDefault);
+		
+		// title
+		if (self.obj.title !== "") { setText(self.obj.title); }
 		
 		// ADJUST LAYOUT (WIDTHS)
 		layout();
@@ -417,21 +457,18 @@
 		
 		// INITIAL STATE
 		self.close();
-				
+		
 		// set selected item
-		if (settings.selected !== null) {
-			self.setValue(settings.selected);
+		if (self.selected !== null) {
+			self.setValue(self.selected);
 		}
-		else {
+		else if (! self.obj.title) {
 			var selectedItem = self.list.find('.selected');
 			if (selectedItem.length === 1)
 				self.set(selectedItem);
 			else
-				self.set(self.list.find('li a').closest('li:first'));
+				self.set(self.list.find('li a').closest('li').first());
 		}
-		
-		// title
-		if (self.obj.title !== '') { setText(self.obj.title); }
 		
 		// CALLBACK
 		if (typeof callback == 'function') { callback.apply(self); }
@@ -449,8 +486,9 @@
 		return this.each(function (){
 			var obj = $(this);
 			if (obj.data('droplist')) return; // return early if this obj already has a plugin instance
-			var instance = new DropList(this, settings, callback);
+			var instance = new DropList(obj, settings, callback);
 			obj.data('droplist', instance);
+			
 			//to keep data access on destroyed <select class=droplist>
 			instance.wrapper.data('droplist', instance);
 		});
