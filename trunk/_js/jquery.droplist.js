@@ -1,4 +1,4 @@
-/* v0.8 (forked by tanguy.pruvot@gmail.com from v0.3r16)
+/* v0.9 (forked by tanguy.pruvot@gmail.com from v0.3r16)
 
   http://code.google.com/p/droplist/
 
@@ -14,6 +14,8 @@
    script/droplist.css
    script/images/droplist_shadow.png
 
+  v0.9 by tanguy.pruvot@gmail.com (31 Aug 2010) :
+   + new (fast) slide setting, default active
   v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
    + width setting
    + autoresize the whole container 
@@ -51,20 +53,21 @@
 		var autoresize;
 		var selected;
 		var callTriggers = false;
-		
+
 		settings = settings || {};
 		
 		// DEFAULT SETTINGS
 		settings.direction = settings.direction || 'auto';
 		if (typeof(settings.customScroll) == "undefined") settings.customScroll = true;
-
+		if (typeof(settings.slide) == "undefined") settings.slide = true;
+		
 		self.autoresize = (settings.autoresize > 0);
 		self.selected = (typeof(settings.selected) == "undefined") ? null : settings.selected;
 		if (typeof(settings.width) !== "undefined") {
 			self.maxWidth = settings.width;
 			self.autoresize = false;
 		}
-		
+
 		// PRIVATE METHODS
 		
 		function setText(str) {
@@ -124,7 +127,11 @@
 		self.open = function () {
 			
 			// just show
-			self.listWrapper.show();
+			if (settings.slide)
+				self.listWrapper.slideDown(60);
+			else
+				self.listWrapper.show();
+
 			
 			// close other opened lists
 			var opened = $('html').find('.droplist-active');
@@ -149,6 +156,7 @@
 			} else if (settings.direction === 'up') {
 				self.wrapper.addClass('droplist-up');
 			}
+			
 			
 			// focus selected item (auto scroll)
 			if (settings.customScroll)
@@ -284,9 +292,12 @@
 		};
 		
 		self.close = function () {
-			self.listWrapper.hide();
 			self.wrapper.removeClass('droplist-active');
 			$('html').unbind('click').unbind('keydown');
+			if (settings.slide)
+				self.listWrapper.slideUp(40);
+			else
+				self.listWrapper.hide();
 		};
 		
 		self.set = function (el) {
