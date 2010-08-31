@@ -35,9 +35,10 @@
 .droplist .droplist-list ul li { list-style-type: none; _height:0; }
 .droplist .droplist-list ul li a, .droplist .droplist-list ul li strong { display:block; padding:1px; color:#47423A; text-decoration:none; }
 .droplist .droplist-list ul li a:hover {color:#6688EE;}
-.droplist .droplist-list ul li a:hover, .droplist .droplist-list ul li a:focus { text-decoration:underline; }
+.droplist .droplist-list ul li a:hover, .droplist .droplist-list ul li a:focus { text-decoration:none; }
 .droplist .droplist-list ul li ul li a { padding:1px 10px 2px 20px; }
 .droplist .droplist-list ul li.selected {background-color: #f0f0f0; }
+.droplist .droplist-list ul li.focused a {color:#6688EE; }
 
 /* Label */
 div.droplist h4 { margin:0; padding:0; color: #333; font-size: 12px;}

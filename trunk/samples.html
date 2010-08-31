@@ -19,7 +19,6 @@
 
 <body class="LNG_en LNG_en-US RGN_US">
 
-	
 	<div class="col">
 	
 		<h1>Using lists</h1>
@@ -370,12 +369,12 @@
 		<option value="www.ask.com">Ask</option>
 		<option value="www.bing.com">Bing</option>
 	</select>
+
 	</div>
 	
-	<div class="sample">
-	</div>
+	<button onclick="jQuery('.droplist').each(function () {$(this).data('droplist').setValue(''); });" >Reset All</button>
 	
 	<script type="text/javascript" charset="utf-8" src="_js/samples.js"></script>
-		
+	
 </body>
 </html>
