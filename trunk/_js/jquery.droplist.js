@@ -15,6 +15,7 @@
    script/images/droplist_shadow.png
 
   v0.9 by tanguy.pruvot@gmail.com (31 Aug 2010) :
+   + fixed left border in skin + new theme without borders
    + new (fast) slide setting, default active
   v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
    + width setting
