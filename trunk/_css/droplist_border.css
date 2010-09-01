@@ -13,7 +13,7 @@
 .droplist { background:url(../_img/droplist_border.png) -66px -66px no-repeat; }
 .droplist .droplist-list { border:1px solid #9DA7B8; background:#FFF; }
 
-.droplist { position:relative; margin:0; color:#fff; font-size:12px; }
+.droplist { position:relative; margin:0; font-size:12px; }
 .droplist .droplist-value { left: 0px; height:22px; line-height:20px; min-width:32px; z-index:3003; }
 .droplist .droplist-value div {
 	height:20px; line-height:18px; color:#000; min-width:16px;
@@ -36,9 +36,11 @@
 .droplist:focus .droplist-list { display:block; }
 .droplist-up .droplist-list { top:auto; bottom:21px; }
 .droplist .droplist-list ul li { list-style-type: none; _height:0; }
-.droplist .droplist-list ul li a, .droplist .droplist-list ul li strong { display:block; padding:1px; color:#47423A; text-decoration:none; }
-.droplist .droplist-list ul li a:hover {color:#6688EE;}
-.droplist .droplist-list ul li a:hover, .droplist .droplist-list ul li a:focus { text-decoration:none; }
+.droplist .droplist-list ul li strong { display:block; padding:1px; color:#47423A; }
+.droplist .droplist-list ul li span { display:block; padding:1px; }
+.droplist .droplist-list ul li span.disabled { color: silver; cursor: default; }
+.droplist .droplist-list ul li a  { display:block; padding:1px; color:#47423A; text-decoration:none; }
+.droplist .droplist-list ul li a:hover {color:#6688EE; }
 .droplist .droplist-list ul li ul li a { padding:1px 10px 2px 20px; }
 .droplist .droplist-list ul li.selected {background-color: #f0f0f0; }
 .droplist .droplist-list ul li.focused a {color:#6688EE; }

@@ -20,7 +20,7 @@
    + difference between selected and focused items
    + reset text to title if defined
    + always set input hidden value
-   + disabled state
+   + disabled state and disabled options
   v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
    + width setting
    + autoresize the whole container
@@ -111,7 +111,10 @@
 			var output = '<ul>';
 			data.each(function () {
 				var selected = $(this).attr('selected') ? 'selected' : '';
-				output += '<li class="' + selected +'"><a href="' + $(this).val() +'">' + text2html($(this).text()) + '</a></li>\t';
+				if (!!$(this).attr('disabled'))
+					output += '<li class="'+selected+'"><span class="disabled">' + text2html($(this).text()) + '<span></li>\t';
+				else
+					output += '<li class="'+selected+'"><a href="' + $(this).val() +'">' + text2html($(this).text()) + '</a></li>\t';
 			});
 			output += '</ul>';
 			return output;
