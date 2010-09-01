@@ -304,13 +304,13 @@
 		self.set = function (el) {
 			var str,val;
 			self.listItems.removeClass('selected');
-			if (el.length == 0) {
+			if ($(el).length == 0) {
 				str = self.obj.title;
 				val = "";
 			} else {
-				str = el.find('>a').text();
-				val = el.find('>a').attr('href');
-				el.addClass('selected');
+				str = $(el).find('>a').text();
+				val = $(el).find('>a').attr('href');
+				$(el).addClass('selected');
 			}
 
 			setText(str);
