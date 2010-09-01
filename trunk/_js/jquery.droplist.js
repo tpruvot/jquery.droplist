@@ -19,6 +19,7 @@
    + new (fast) slide setting, default active
    + difference between selected and focused items
    + reset text to title if defined
+   + always set input hidden value
   v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
    + width setting
    + autoresize the whole container
@@ -52,6 +53,7 @@
 	var DropList = function (el, settings, callback) {
 
 		var self = this;
+		var isInsideForm = false;
 
 		var maxWidth;
 		var autoresize;
@@ -118,14 +120,12 @@
 		// PUBLIC METHODS
 
 		self.setValue = function (val, trigger) {
-			var item = self.listItems.find(">a[href='"+val+"']").closest('li');
-			if (item.length === 1) {
+			var item = self.listItems.find(">a[href='"+val.replace("'","\'")+"']").closest('li');
+			if (item.length <= 1) {
 				self.callTriggers = false;
 				if (self.get() != val && trigger) self.callTriggers = true;
 				self.set(item);
 				self.callTriggers = true;
-			} else {
-				setText(self.obj.title);
 			}
 		}
 
@@ -292,33 +292,39 @@
 
 		};
 
-		self.close = function () {
+		self.close = function (fast) {
 			self.wrapper.removeClass('droplist-active');
 			$('html').unbind('click').unbind('keydown');
-			if (settings.slide)
+			if (settings.slide && !fast)
 				self.listWrapper.slideUp(40);
 			else
 				self.listWrapper.hide();
 		};
 
 		self.set = function (el) {
+			var str,val;
+			self.listItems.removeClass('selected');
+			if (el.length == 0) {
+				str = self.obj.title;
+				val = "";
+			} else {
+				str = el.find('>a').text();
+				val = el.find('>a').attr('href');
+				el.addClass('selected');
+			}
 
-			var str = $(el).find('>a').text();
 			setText(str);
-			self.listItems.removeClass('selected').filter(el).addClass('selected');
-
-			if (self.inputHidden.length > 0) {
-				var val = el.find('a').attr('href');
+			if (self.inputHidden.length) {
 				self.inputHidden.attr('value', val);
 			}
 
+			self.close(1);
 			if (self.callTriggers) {
-				self.close();
 				if (self.obj.attr('onchange')) {
 					//set "this.value"
-					self.obj.val(self.get()); //firefox, chrome
+					self.obj.val(val); //firefox, chrome
 					self.obj.append( //IE8 doesnt want a value without selected <option>
-						$('<option selected="selected"></option>').val(self.get()).html('')
+						$('<option selected="selected"></option>').val(val).html('')
 					);
 					self.obj.trigger('onchange');
 				} else {
@@ -370,8 +376,6 @@
 		self.obj.title = self.obj.attr('title') || '';
 		self.obj.width = self.obj.width();
 		self.maxWidth = self.maxWidth || self.obj.width;
-
-		var isInsideForm = false;
 
 		// insert wrapper
 		var wrapperHtml = '<div class="' + self.obj.className + ' droplist"><div class="droplist-list"></div></div>';
@@ -468,7 +472,7 @@
 		}
 
 		// INITIAL STATE
-		self.close();
+		self.close(1);
 
 		// set selected item
 		if (self.selected !== null) {
