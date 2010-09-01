@@ -19,10 +19,14 @@
 	height:20px; line-height:18px; color:#000; min-width:16px;
 	padding:2px; padding-left:3px; padding-bottom:0px;
 }
+
 .droplist .droplist-value a.nogo {
 	height:22px; width:18px;
 	outline:none; text-indent:-9999px;
 }
+
+.disabled .droplist-value div    {background-position: 0px   0px; cursor: ''; color: silver; }
+.disabled .droplist-value a.nogo {background-position: 0px -66px; cursor: ''; }
 
 .droplist-active { z-index:999; }
 .droplist-active div { background-position:0 -44px !important; outline:none; }

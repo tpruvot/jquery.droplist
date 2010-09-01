@@ -20,6 +20,7 @@
    + difference between selected and focused items
    + reset text to title if defined
    + always set input hidden value
+   + disabled state
   v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
    + width setting
    + autoresize the whole container
@@ -441,6 +442,9 @@
 		}
 
 		// clicking on selected value or dropdown button
+		if (self.wrapper.hasClass("disabled"))
+			self.drop.removeAttr('href');
+		else
 		self.zone.mousedown( function (e) {
 			if (self.listWrapper.is(':hidden')) {
 				self.open();

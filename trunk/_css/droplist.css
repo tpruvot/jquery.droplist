@@ -13,7 +13,6 @@
 .droplist { background:url(../_img/droplist_shadow.png) -66px -66px no-repeat; }
 .droplist .droplist-list { border:1px solid #f0f0f0; background:#FFF; }
 
-
 .droplist { position:relative; margin:0; color:#fff; font-size:12px; }
 .droplist .droplist-value { left: 0px; height:22px; line-height:20px; min-width:32px; z-index:3003; }
 .droplist .droplist-value div {
@@ -24,6 +23,9 @@
 	height:22px; width:18px;
 	outline:none; text-indent:-9999px;
 }
+
+.disabled .droplist-value div    {background-position: 0px   0px; cursor: ''; color: silver; }
+.disabled .droplist-value a.nogo {background-position: 0px -66px; cursor: ''; }
 
 .droplist-active { z-index:999; }
 .droplist-active div { background-position:0 -44px !important; outline:none; }

@@ -37,6 +37,19 @@
 		<hr />
 		
 		<div class="sample">
+			<h2>Disabled</h2>
+			<ul class="droplist droplist-by-list disabled">
+				<li><a href="http://www.google.com">Google</a></li>
+				<li><a href="http://www.yahoo.com">Yahoo</a></li>
+				<li><a href="http://www.ask.com">Ask</a></li>
+				<li><a href="http://www.beta.com">Beta</a></li>
+				<li><a href="http://www.bing.com">Bing</a></li>
+			</ul>
+		</div>
+		
+		<hr />
+		
+		<div class="sample">
 			<h2>Default text</h2>
 			<ul class="droplist droplist-by-list" title="Choose an item">
 				<li><a href="http://www.google.com">Google</a></li>
@@ -67,50 +80,6 @@
 				<li  class="selected"><a href="http://www.yahoo.com">Yahoo</a></li>
 				<li><a href="http://www.ask.com">Ask</a></li>
 				<li><a href="http://www.bing.com">Bing</a></li>
-			</ul>
-		</div>
-		
-		<div class="lin-hor-dotted"><hr /></div>
-		
-		<div class="sample">
-			<h2>Sub items normal</h2>
-			<ul class="droplist droplist-by-list">
-				<li>
-					<strong>1</strong>
-					<ul>
-						<li><a href="http://www.google.com">1.1</a></li>
-						<li><a href="http://www.google.com">1.2</a></li>
-					</ul>
-				</li>
-				<li>
-					<strong>2</strong>
-					<ul>
-						<li><a href="http://www.google.com">2.1</a></li>
-						<li class="selected"><a href="http://www.google.com">2.2</a></li>
-					</ul>
-				</li>
-			</ul>
-		</div>
-		
-		<div class="lin-hor-dotted"><hr /></div>
-		
-		<div class="sample">
-			<h2>Sub items with linked optgroups</h2>
-			<ul class="droplist droplist-by-list">
-				<li>
-					<a href="http://www.google.com">1</a>
-					<ul>
-						<li><a href="http://www.google.com">1.1</a></li>
-						<li><a href="http://www.google.com">1.2</a></li>
-					</ul>
-				</li>
-				<li>
-					<a href="http://www.google.com">2</a>
-					<ul>
-						<li><a href="http://www.google.com">2.1</a></li>
-						<li class="selected"><a href="http://www.google.com">2.2</a></li>
-					</ul>
-				</li>
 			</ul>
 		</div>
 		
@@ -184,6 +153,49 @@
 			</div>
 		</div>
 
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<div class="sample">
+			<h2>Sub items normal</h2>
+			<ul class="droplist droplist-by-list">
+				<li>
+					<strong>1</strong>
+					<ul>
+						<li><a href="http://www.google.com">1.1</a></li>
+						<li><a href="http://www.google.com">1.2</a></li>
+					</ul>
+				</li>
+				<li>
+					<strong>2</strong>
+					<ul>
+						<li><a href="http://www.google.com">2.1</a></li>
+						<li class="selected"><a href="http://www.google.com">2.2</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="lin-hor-dotted"><hr /></div>
+		
+		<div class="sample">
+			<h2>Sub items with linked optgroups</h2>
+			<ul class="droplist droplist-by-list">
+				<li>
+					<a href="http://www.google.com">1</a>
+					<ul>
+						<li><a href="http://www.google.com">1.1</a></li>
+						<li><a href="http://www.google.com">1.2</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="http://www.google.com">2</a>
+					<ul>
+						<li><a href="http://www.google.com">2.1</a></li>
+						<li class="selected"><a href="http://www.google.com">2.2</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
 	</div>
 	
 	<hr />
@@ -199,6 +211,22 @@
 			<form method="get" action="">
 				<fieldset>
 					<select name="comboName" class="droplist droplist-by-select">
+						<option value="0">Google</option>
+						<option value="1">Yahoo</option>
+						<option value="2">Ask</option>
+						<option value="3">Bing</option>
+					</select>
+				</fieldset>
+			</form>
+		</div>
+		
+		<hr />
+
+		<div class="sample">
+			<h2>Disabled</h2>
+			<form method="get" action="">
+				<fieldset>
+					<select name="comboName" class="droplist droplist-by-select disabled">
 						<option value="0">Google</option>
 						<option value="1">Yahoo</option>
 						<option value="2">Ask</option>
@@ -251,26 +279,6 @@
 						<option value="1" selected="selected">Yahoo</option>
 						<option value="2">Ask</option>
 						<option value="3">Bing</option>
-					</select>
-				</fieldset>
-			</form>
-		</div>
-		
-		<hr />
-
-		<div class="sample">
-			<h2>Sub items (optgroup)</h2>
-			<form method="get" action="">
-				<fieldset>
-					<select name="comboName" class="droplist droplist-by-select">
-						<optgroup label="1">
-							<option value="1.1">1.1</option>
-							<option value="1.2">1.2</option>
-						</optgroup>
-						<optgroup label="2">
-							<option value="2.1">2.1</option>
-							<option value="2.2" selected="selected">2.2</option>
-						</optgroup>
 					</select>
 				</fieldset>
 			</form>
@@ -356,7 +364,27 @@
 				</fieldset>
 			</form>
 		</div>
-	
+		
+		<hr />
+		
+		<div class="sample">
+			<h2>Sub items (optgroup)</h2>
+			<form method="get" action="">
+				<fieldset>
+					<select name="comboName" class="droplist droplist-by-select">
+						<optgroup label="1">
+							<option value="1.1">1.1</option>
+							<option value="1.2">1.2</option>
+						</optgroup>
+						<optgroup label="2">
+							<option value="2.1">2.1</option>
+							<option value="2.2" selected="selected">2.2</option>
+						</optgroup>
+					</select>
+				</fieldset>
+			</form>
+		</div>
+		
 	</div>
 
 	<div>
