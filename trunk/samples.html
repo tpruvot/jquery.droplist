@@ -5,11 +5,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Droplist</title>
 	<link rel="shortcut icon" type="image/x-icon" href="http://www.gstatic.com/codesite/ph/images/phosting.ico" />
+	<link rel="stylesheet" type="text/css" href="_css/context.css" />
+
 	<link rel="stylesheet" type="text/css" href="_css/droplist.css" />
 	<link rel="stylesheet" type="text/css" href="_css/droplist_border.css" />
 	
-	<link rel="stylesheet" type="text/css" href="_css/context.css" />
-
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="_js/jquery.mousewheel.js"></script>
 	<script type="text/javascript" charset="utf-8" src="_js/jquery.jScrollPane.js"></script>
@@ -29,8 +29,8 @@
 				<li><a href="http://www.google.com">Google</a></li>
 				<li><a href="http://www.yahoo.com">Yahoo</a></li>
 				<li><a href="http://www.ask.com">Ask</a></li>
-				<li><a href="http://www.beta.com">Beta</a></li>
-				<li><span class="disabled">Disabled</span></li>
+				<li class="red"><a href="http://www.beta.com">Beta</a></li>
+				<li><span class="disabled red">Disabled</span></li>
 				<li><a href="http://www.bing.com">Bing</a></li>
 			</ul>
 		</div>
@@ -214,6 +214,7 @@
 					<select name="comboName" class="droplist droplist-by-select">
 						<option value="0">Google</option>
 						<option value="1">Yahoo</option>
+						<option class="red" value="5">Beta</option>
 						<option value="2">Ask</option>
 						<option value="4" disabled="disabled">Disabled</option>
 						<option value="3">Bing</option>

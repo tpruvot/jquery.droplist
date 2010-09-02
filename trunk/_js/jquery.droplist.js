@@ -23,6 +23,7 @@
    + disabled state and disabled options
    + original onchange attr visible on input hidden
    + .droplist() results new created div(s)
+   + keep original option/li classes
   v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
    + width setting
    + autoresize the whole container
@@ -126,10 +127,11 @@
 			var output = '<ul>';
 			data.each(function () {
 				var selected = $(this).attr('selected') ? 'selected' : '';
+				selected += ($(this).attr('class') || '');
 				if (!!$(this).attr('disabled'))
-					output += '<li class="'+selected+'"><span class="disabled">' + text2html($(this).text()) + '<span></li>\t';
+					output += '<li class="'+selected+' "><span class="disabled">' + text2html($(this).text()) + '<span></li>\t';
 				else
-					output += '<li class="'+selected+'"><a href="' + $(this).val() +'">' + text2html($(this).text()) + '</a></li>\t';
+					output += '<li class="'+selected+' "><a href="' + $(this).val() +'">' + text2html($(this).text()) + '</a></li>\t';
 			});
 			output += '</ul>';
 			return output;

@@ -30,3 +30,7 @@ h1 { font-size:20px; margin:0 0 20px 0; }
 .sample { margin:0 0 12px 0; }
 
 .tabs div { margin:1px 0 0 0; padding:5px; background:#BEB7AF; color:#FFF; }
+
+.droplist .droplist-list ul li.red a { color: red; }
+.droplist .droplist-list ul li.blue a { color: blue; }
+.droplist .droplist-list ul li.green a { color: green; }
