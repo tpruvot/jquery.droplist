@@ -1,0 +1,63 @@
+
+- convert all select (comboboxes) to droplists :
+	jQuery('select').droplist();
+	or with settings
+	jQuery('select').droplist({autoresize:true});
+
+- set value
+	at conversion
+	jQuery('#mydiv select').droplist().data('droplist').setValue('xxx');
+	or later :
+	jQuery('#mydiv .droplist').droplist().setValue('xxx');
+
+CHANGELOG :
+
+v1.0 by tanguy.pruvot@gmail.com (02 Sep 2010) :
+ + Second call to .droplist() returns plugin instance
+ + .droplist() results new created div(s)
+ + keep original option/li classes
+ + create html #id on new <id>_div, and <id>_hidden based on select id
+ * rewrote local settings/defaults code
+ * renamed css files
+ * some graphic fixes in png
+ 
+v0.9 by tanguy.pruvot@gmail.com (01 Sep 2010) :
+ + fixed left border in skin + new theme without borders
+ + new (fast) slide setting, default active
+ + difference between selected and focused items
+ + reset text to title if defined
+ + always set input hidden value
+ + disabled state and disabled options
+ + original onchange attr visible on input hidden
+ 
+v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
+ + width setting
+ + autoresize the whole container
+ * fix autoresize false (default alex's droplist)
+ * fix selected setting if "0" or ""
+ * fix some events in IE
+ * fix list-up position
+ * fix sample console bug if not exists
+ * local settings vars
+ 
+v0.7 by tanguy.pruvot@gmail.com (30 Aug 2010) :
+ + mousedown event for faster droplist opening
+ + bind all "li a" to prevent IE page jump
+ + added a "selected" setting to force initial value
+ + added setValue() public method
+ * fix .data('droplist') when used on select, also to close all opened
+ 
+v0.6 by tanguy.pruvot@gmail.com (29 Aug 2010) :
+ + autoresize setting to reduce selectbox width when possible
+ + optgroup key navigation
+ + CSS cleanup
+ 
+v0.5 by tanguy.pruvot@gmail.com (28 Aug 2010) :
+ + Prevent event propagation on click and key nav.
+ + Automatic addClass("droplist") on <select>,
+   allowing a simple jQuery('select').droplist();
+   
+v0.4 by tanguy.pruvot@gmail.com (23 Aug 2010) :
+ + Arrows,Page,End Key navigation / Enter,space to select
+ + Type ahead : next position and rotation
+ + Automatic onchange event from select tag

@@ -1,83 +1,57 @@
-/* v0.9git3 (forked by tanguy.pruvot@gmail.com from v0.3r16)
+/*	jquery.droplist v1.0 by Tanguy Pruvot Rev: $Rev$ $Id$
 
-  http://code.google.com/p/droplist/
+	02 September 2010 - http://github.com/tpruvot/jquery.droplist
 
-  jQuery('#mydiv select').droplist();
-  jQuery('#mydiv .droplist').data('droplist').setValue('xxx');
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
 
-  Files
-  JS
-   script/jquery.droplist.js
-   script/jquery.mousewheel.js (if using customScroll)
-   script/jquery.jScrollPane.js (if using customScroll)
-  CSS
-   script/droplist.css
-   script/images/droplist_border.png
+	http://www.apache.org/licenses/LICENSE-2.0
 
-  v0.9 by tanguy.pruvot@gmail.com (02 Sep 2010) :
-   + fixed left border in skin + new theme without borders
-   + new (fast) slide setting, default active
-   + difference between selected and focused items
-   + reset text to title if defined
-   + always set input hidden value
-   + disabled state and disabled options
-   + original onchange attr visible on input hidden
-   + .droplist() results new created div(s)
-   + keep original option/li classes
-  v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
-   + width setting
-   + autoresize the whole container
-   * fix autoresize false (default alex's droplist)
-   * fix selected setting if "0" or ""
-   * fix some events in IE
-   * fix list-up position
-   * fix sample console bug if not exists
-   * local settings vars
-  v0.7 by tanguy.pruvot@gmail.com (30 Aug 2010) :
-   + mousedown event for faster droplist opening
-   + bind all "li a" to prevent IE page jump
-   + added a "selected" setting to force initial value
-   + added setValue() public method
-   * fix .data('droplist') when used on select, also to close all opened
-  v0.6 by tanguy.pruvot@gmail.com (29 Aug 2010) :
-   + autoresize setting to reduce selectbox width when possible
-   + optgroup key navigation
-   + CSS cleanup
-  v0.5 by tanguy.pruvot@gmail.com (28 Aug 2010) :
-   + Prevent event propagation on click and key nav.
-   + Automatic addClass("droplist") on <select>,
-     allowing a simple jQuery('select').droplist();
-  v0.4 by tanguy.pruvot@gmail.com (23 Aug 2010) :
-   + Arrows,Page,End Key navigation / Enter,space to select
-   + Type ahead : next position and rotation
-   + Automatic onchange event from select tag
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+
+	forked from alex's v0.3r16 - http://code.google.com/p/droplist/
+
+	jQuery('#mydiv select').droplist();
+	jQuery('#mydiv .droplist').droplist().setValue('xxx');
+
+	Files
+	JS
+		script/jquery.droplist.js
+		script/jquery.mousewheel.js (if using customScroll)
+		script/jquery.jScrollPane.js (if using customScroll)
+  	CSS
+		script/jquery.droplist.css
+		script/images/jquery.droplist.png
+
 */
 (function ($) {
 
-	var DropList = function (el, settings, callback) {
+	var DropList = function (el, options, callback) {
 
 		var self = this;
 		var isInsideForm = false;
+		var callTriggers = false;
 		var onchange;
 
-		var maxWidth;
-		var autoresize;
-		var selected;
-		var callTriggers = false;
-
-		var undef;
-		settings = settings || {};
-
 		// DEFAULT SETTINGS
-		settings.direction = settings.direction || 'auto';
-		if (settings.customScroll === undef) settings.customScroll = true;
-		if (settings.slide === undef)        settings.slide = true;
-
-		self.autoresize = !!settings.autoresize;
-		self.selected = (settings.selected === undef) ? null : settings.selected;
-		if (settings.width !== undef) {
-			self.maxWidth = settings.width;
-			self.autoresize = false;
+		var defaults = { 
+			'direction': 'auto', 
+			'customScroll': true, 
+			'autoresize' : false,
+			'slide': true,
+			'width': null,
+			'selected': null
+		};
+		
+		var settings = $.extend({}, defaults, options);
+		
+		if (settings.width !== null) {
+			settings.autoresize = false;
 		}
 
 		// PRIVATE METHODS
@@ -95,14 +69,14 @@
 		}
 
 		function layout() {
-			self.listWrapper.css('width', (self.maxWidth - (self.listWrapper.outerWidth(true) - self.listWrapper.width())) + 'px');
-			if (!self.autoresize) {
+			self.listWrapper.css('width', (settings.width - (self.listWrapper.outerWidth(true) - self.listWrapper.width())) + 'px');
+			if (!settings.autoresize) {
 				self.wrapper.css('clear','both');
 				self.option.css('display','block');
 				self.option.css('float','left');
 				self.drop.css('display','block');
 				self.drop.css('float','left');
-				self.option.css('width', (self.maxWidth - self.drop.width() - (self.option.outerWidth(true) - self.option.width())) + 'px');
+				self.option.css('width', (settings.width - self.drop.width() - (self.option.outerWidth(true) - self.option.width())) + 'px');
 			}
 		}
 
@@ -143,8 +117,7 @@
 		self.setValue = function (val, trigger) {
 			var item = self.listItems.find(">a[href='"+text2js(val)+"']").closest('li');
 			if (item.length <= 1) {
-				self.callTriggers = false;
-				if (self.get() != val && trigger) self.callTriggers = true;
+				self.callTriggers = (trigger && self.get() != val);
 				self.set(item);
 				self.callTriggers = true;
 			}
@@ -340,6 +313,25 @@
 			}
 
 			self.close(1);
+
+			//set container width to div + dropdown bt width to prevent dropdown br
+			if (settings.autoresize) {
+				self.option.css('width','');
+				self.select.css('display','inline-block');
+				self.select.css('width',settings.width);
+				if (self.option.outerWidth(true) + self.drop.outerWidth(true) >= settings.width) {
+					var wx = self.option.outerWidth(true) - self.option.width();
+					self.option.css('width',settings.width - self.drop.outerWidth(true) - wx);
+				}
+				self.select.css('width',self.option.outerWidth(true) + self.drop.outerWidth(true));
+
+				self.wrapper.css('display','inline-block');
+				self.wrapper.css('width',self.option.outerWidth(true) + self.drop.outerWidth(true));
+			} else {
+				var wx = self.option.outerWidth(true) - self.option.width();
+				self.option.css('width',settings.width - self.drop.outerWidth(true) - wx);
+			}
+			
 			if (self.callTriggers) {
 				if (self.onchange) {
 					//set "this.value"
@@ -351,24 +343,6 @@
 				} else {
 					self.obj.trigger('droplistchange', self);
 				}
-			}
-
-			//set container width to div + dropdown bt width to prevent dropdown br
-			if (self.autoresize) {
-				self.option.css('width','');
-				self.select.css('display','inline-block');
-				self.select.css('width',self.maxWidth);
-				if (self.option.outerWidth(true) + self.drop.outerWidth(true) >= self.maxWidth) {
-					var wx = self.option.outerWidth(true) - self.option.width();
-					self.option.css('width',self.maxWidth - self.drop.outerWidth(true) - wx);
-				}
-				self.select.css('width',self.option.outerWidth(true) + self.drop.outerWidth(true));
-
-				self.wrapper.css('display','inline-block');
-				self.wrapper.css('width',self.option.outerWidth(true) + self.drop.outerWidth(true));
-			} else {
-				var wx = self.option.outerWidth(true) - self.option.width();
-				self.option.css('width',self.maxWidth - self.drop.outerWidth(true) - wx);
 			}
 		};
 
@@ -394,9 +368,10 @@
 
 		self.obj.className = self.obj.attr('class');
 		self.obj.name = self.obj.attr('name');
+		self.obj.id = self.obj.attr('id');
 		self.obj.title = self.obj.attr('title') || '';
 		self.obj.width = self.obj.width();
-		self.maxWidth = self.maxWidth || self.obj.width;
+		settings.width = settings.width || self.obj.width;
 		self.onchange = self.obj[0].getAttribute('onchange');
 
 		// insert wrapper
@@ -404,6 +379,7 @@
 
 		// get elements
 		self.wrapper = self.obj.removeAttr('class').wrap(wrapperHtml).parent().parent();
+		if (self.obj.id) self.wrapper.attr('id',self.obj.id+'_div');
 		self.listWrapper = self.wrapper.find('.droplist-list:first');
 		self.list = self.listWrapper.find('ul:first');
 
@@ -433,7 +409,7 @@
 
 		// input hidden
 		if (isInsideForm) {
-			self.wrapper.append('<input type="hidden" name="' + self.obj.name + '" value="" onchange="'+text2attr(self.onchange)+'" />');
+			self.wrapper.append('<input type="hidden" name="" value="" />');//onchange="'+text2attr(self.onchange)+'" />');
 		}
 
 		// GET ELEMENTS
@@ -444,15 +420,21 @@
 		self.drop = self.select.find('a:first');
 		self.inputHidden = self.wrapper.find('input[type=hidden]:first');
 
-		//if (isInsideForm) {
-		//  //we need to find a way to detect external change of select value via javascript
-		//	self.inputHidden.change(function (e) {
-		//		alert(e);
-		//	});
-		//}
+		if (isInsideForm) {
+			self.inputHidden.attr('name',self.obj.name);
+			if (self.obj.id) self.inputHidden.attr('id',self.obj.id+'_hidden');
+			//we need to find a way to detect external change of select value via javascript
+			self.inputHidden[0].addEventListener('DOMAttrModified', function (e) {
+				if (callTriggers && e.attrName == 'value') {
+					//working only in Mozilla
+					window.alert(e.attrName);
+				}
+			}, false);
+		}
 
 		// EVENTS
-
+		jQuery.event.copy(self.obj,self.wrapper);
+		
 		// null function to prevent browser default events
 		function preventDefault (e) {
 			e.preventDefault();
@@ -474,7 +456,7 @@
 		//cancel href #nogo jump
 		self.drop.click(preventDefault);
 
-		// clicking on an option inside a form
+		//clicking on an option inside a form
 		self.list.find('li a').closest('li').click( function (e) {
 			self.set($(this));
 			return preventDefault(e);
@@ -482,7 +464,7 @@
 		//cancel href links
 		self.list.find('li a').click(preventDefault);
 
-		// title
+		//title
 		if (self.obj.title !== "") { setText(self.obj.title); }
 
 		// ADJUST LAYOUT (WIDTHS)
@@ -497,8 +479,8 @@
 		self.close(1);
 
 		// set selected item
-		if (self.selected !== null) {
-			self.setValue(self.selected);
+		if (settings.selected !== null) {
+			self.setValue(settings.selected);
 		}
 		else if (! self.obj.title) {
 			var selectedItem = self.list.find('.selected');
@@ -516,22 +498,56 @@
 
 	};
 
-	// extend jQuery
-	$.fn.droplist = function (settings, callback) {
-		var newDiv=this;
-		this.each(function (){
-			var obj = $(this);
-			if (obj.data('droplist')) return; // return early if this obj already has a plugin instance
-			var instance = new DropList(this, settings, callback);
-			obj.data('droplist', 1);
+	/**
+	 * Logic for copying events from one jQuery object to another.
+	 *
+	 * @name jQuery.events.copy
+	 * @param jQuery|String|DOM Element jQuery object to copy events from. Only uses the first matched element.
+	 * @param jQuery|String|DOM Element jQuery object to copy events to. Copies to all matched elements.
+	 * @type undefined
+	 * @cat Plugins/copyEvents
+	 * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
+	 */
+	jQuery.event.copy = function(from, to) {
+		from = (from.jquery) ? from : jQuery(from);
+		to   = (to.jquery)   ? to   : jQuery(to);
+		
+		if (!from.size() || !from[0].events || !to.size()) return;
+			
+		var events = from[0].events;
+		to.each(function() {
+			for (var type in events)
+				for (var handler in events[type])
+					jQuery.event.add(this, type, events[type][handler], events[type][handler].data);
+		});
+	};
 
-			//external data access, ex: jQuery('.droplist').data('droplist').setValue(xxx);
+	// extend jQuery
+	jQuery.fn.droplist = function (settings, callback) {
+		var newDiv=jQuery();
+		this.each(function (){
+			var sel = $(this);
+			var obj = sel.data('droplist');
+			if (obj) {
+				// return early if this obj already has a plugin instance
+				if (obj !== 1) {
+					// return plugin instance $('.droplist').droplist().setValue(xxx)
+					newDiv = obj;
+					return false;
+				}
+				//continue to next object to find/create
+				return true;
+			}
+			var instance = new DropList(this, settings, callback);
+			sel.data('droplist', 1);
+
+			//external data access, ex: $('.droplist').data('droplist').setValue(xxx);
 			instance.wrapper.data('droplist', instance);
-			//$.extend(instance.wrapper[0],instance);
+			//$.extend(instance.wrapper,instance);
 			$.merge(newDiv,instance.wrapper);
 		});
-		//substitute select or ul by new div
-		return newDiv.filter('div');
+		//substitute select/ul by new div(s)
+		return newDiv;
 	};
 
 })(jQuery);

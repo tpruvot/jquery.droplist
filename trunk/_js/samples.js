@@ -16,7 +16,7 @@ function samples() {
 
 	// BY SELECT
 	var collect = jQuery('select.droplist-by-select').droplist(settings);
-	console.log(collect);
+	//console.log(collect);
 	
 	// BY LIST
 	jQuery('.droplist-by-list').droplist(settings, function() {
@@ -54,7 +54,8 @@ function samples() {
 	});
 	
 	//droplist-by-select-autoresize
-	var test = jQuery('.droplist-by-select-autoresize').droplist({autoresize:true});
-	console.log(test);
+	jQuery('.droplist-by-select-autoresize').bind('click',function(e){alert('ok');});
+	var single = jQuery('.droplist-by-select-autoresize').droplist({autoresize:true});
+	//console.log(single);
 	
 };

@@ -9,18 +9,19 @@
 }
 
 /* Skin */
-.droplist .droplist-value div    {background:url(../_img/droplist_border.png)   0px -22px repeat-x; }
-.droplist .droplist-value a.nogo {background:url(../_img/droplist_border.png) -22px -66px no-repeat; }
-.droplist { background:url(../_img/droplist_border.png) -66px -66px no-repeat; }
-.droplist .droplist-list { border:1px solid #9DA7B8; background:#FFF; }
+.droplist, .droplist .droplist-value div, .droplist .droplist-value a.nogo { background:url(../_img/droplist.noborder.png) no-repeat; }
+
+.droplist .droplist-value div    {background-position:   0px -22px; background-repeat: repeat-x; }
+.droplist .droplist-value a.nogo {background-position: -22px -66px; }
+.droplist { background-position: -66px -66px; }
+.droplist .droplist-list { border:1px solid #f0f0f0; background:#FFF; }
 
 .droplist { position:relative; margin:0; font-size:12px; }
 .droplist .droplist-value { left: 0px; height:22px; line-height:20px; min-width:32px; z-index:3003; }
 .droplist .droplist-value div {
 	height:20px; line-height:18px; color:#000; min-width:16px;
-	padding:2px; padding-left:3px; padding-bottom:0px;
+	padding:2px; padding-bottom:0px;
 }
-
 .droplist .droplist-value a.nogo {
 	height:22px; width:18px;
 	outline:none; text-indent:-9999px;

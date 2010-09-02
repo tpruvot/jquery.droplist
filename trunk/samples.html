@@ -7,8 +7,8 @@
 	<link rel="shortcut icon" type="image/x-icon" href="http://www.gstatic.com/codesite/ph/images/phosting.ico" />
 	<link rel="stylesheet" type="text/css" href="_css/context.css" />
 
-	<link rel="stylesheet" type="text/css" href="_css/droplist.css" />
-	<link rel="stylesheet" type="text/css" href="_css/droplist_border.css" />
+	<!--<link rel="stylesheet" type="text/css" href="_css/jquery.droplist.noborder.css" />-->
+	<link rel="stylesheet" type="text/css" href="_css/jquery.droplist.css" />
 	
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="_js/jquery.mousewheel.js"></script>
@@ -17,7 +17,7 @@
 
 </head>
 
-<body class="LNG_en LNG_en-US RGN_US">
+<body>
 
 	<div class="col">
 	
@@ -393,25 +393,26 @@
 	<hr />
 
 	<div class="sample">
-		<h2>Autoresize</h2>
-		<select name="comboName" class="droplist droplist-by-select-autoresize">
+		<h2>Autoresize and onchange event</h2>
+		<select name="autoresize" class="droplist droplist-by-select-autoresize" onchange="alert(this.value);" onblur="alert('blur');">
 			<option value="0">Google</option>
 			<option value="1" selected="selected">Yahoo</option>
 			<option value="2">Ask</option>
 			<option value="3">Bing</option>
 			<option value="4">Long text Long text Long text Long text Long text Long text</option>
 		</select>
+		<button onclick="jQuery('.droplist-by-select-autoresize').droplist().setValue('3');" >Change me</button>
+		<button onclick="jQuery('.droplist-by-select-autoresize').droplist().setValue('2',true);" >With trigger</button>
 	</div>
 		
 	<hr />
 
-	<select name="comboName" class="droplist-by-select" title="fixed width to 200px" style="width:200px">
+	<select class="droplist-by-select" title="fixed width to 200px" style="width:200px">
 		<option value="www.google.com">Google</option>
 		<option value="www.yahoo.com">Yahoo</option>
 		<option value="www.ask.com">Ask</option>
 		<option value="www.bing.com">Bing</option>
 	</select>
-		
 		
 	<h1 style="margin-top: 20px;">Actions</h1>
 	<button onclick="jQuery('.droplist').each(function () {$(this).data('droplist').setValue(''); });" >Reset All</button>
