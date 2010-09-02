@@ -2,9 +2,7 @@ jQuery(document).ready(samples);
 
 function samples() {
 
-	var undef;
-
-	if (console != undef)
+	if (typeof(console) != 'undefined')
 		jQuery.error = console.error;
 
 	// GENERIC CONFIGURATION
@@ -21,9 +19,9 @@ function samples() {
 	jQuery('.droplist-by-list').droplist(settings, function() {
 		var that = this;
 		that.list.find('li a').closest('li').bind('click', function(e) {
-			(console != undef) && console.log(this);
+			(typeof(console) != 'undefined') && console.log(this);
 			that.set(this);
-			(console != undef) && console.log(that);
+			(typeof(console) != 'undefined') && console.log(that);
 			return false;
 		});
 	});
