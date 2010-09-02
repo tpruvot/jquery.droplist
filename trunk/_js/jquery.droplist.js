@@ -1,4 +1,4 @@
-/* v0.9git2 (forked by tanguy.pruvot@gmail.com from v0.3r16)
+/* v0.9git3 (forked by tanguy.pruvot@gmail.com from v0.3r16)
 
   http://code.google.com/p/droplist/
 
@@ -22,6 +22,7 @@
    + always set input hidden value
    + disabled state and disabled options
    + original onchange attr visible on input hidden
+   + .droplist() results new created div(s)
   v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
    + width setting
    + autoresize the whole container
@@ -341,7 +342,7 @@
 				if (self.onchange) {
 					//set "this.value"
 					self.obj.val(val); //firefox, chrome
-					self.obj.append( //IE8 doesnt want a value without selected <option>
+					self.obj.html( //IE8 doesnt want a value without selected <option>
 						$('<option selected="selected"></option>').val(val).html('')
 					);
 					self.obj.trigger('onchange');
@@ -403,9 +404,6 @@
 		self.wrapper = self.obj.removeAttr('class').wrap(wrapperHtml).parent().parent();
 		self.listWrapper = self.wrapper.find('.droplist-list:first');
 		self.list = self.listWrapper.find('ul:first');
-
-		//prevent temporary content drawing
-		//self.list.css('display','none');
 
 		// case it's a SELECT tag, not a UL
 		if (self.list.length === 0) {
@@ -511,9 +509,6 @@
 		// CALLBACK
 		if (typeof callback == 'function') { callback.apply(self); }
 
-		//reset temporary display:none
-		//self.list.css('display','');
-
 		//enable triggers
 		self.callTriggers = true;
 
@@ -521,15 +516,20 @@
 
 	// extend jQuery
 	$.fn.droplist = function (settings, callback) {
-		return this.each(function (){
+		var newDiv=this;
+		this.each(function (){
 			var obj = $(this);
 			if (obj.data('droplist')) return; // return early if this obj already has a plugin instance
-			var instance = new DropList(obj, settings, callback);
-			obj.data('droplist', instance);
+			var instance = new DropList(this, settings, callback);
+			obj.data('droplist', 1);
 
 			//external data access, ex: jQuery('.droplist').data('droplist').setValue(xxx);
 			instance.wrapper.data('droplist', instance);
+			//$.extend(instance.wrapper[0],instance);
+			$.merge(newDiv,instance.wrapper);
 		});
+		//substitute select or ul by new div
+		return newDiv.filter('div');
 	};
 
 })(jQuery);
