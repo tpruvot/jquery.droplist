@@ -52,4 +52,7 @@ function samples() {
 		alert('changed to ' + val);
 	});
 	
+	//droplist-by-select-autoresize
+	jQuery('.droplist-by-select-autoresize').droplist({autoresize:true});
+	
 };

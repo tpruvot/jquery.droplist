@@ -1,4 +1,4 @@
-/* v0.9 (forked by tanguy.pruvot@gmail.com from v0.3r16)
+/* v0.9git2 (forked by tanguy.pruvot@gmail.com from v0.3r16)
 
   http://code.google.com/p/droplist/
 
@@ -12,15 +12,16 @@
    script/jquery.jScrollPane.js (if using customScroll)
   CSS
    script/droplist.css
-   script/images/droplist_shadow.png
+   script/images/droplist_border.png
 
-  v0.9 by tanguy.pruvot@gmail.com (01 Sep 2010) :
+  v0.9 by tanguy.pruvot@gmail.com (02 Sep 2010) :
    + fixed left border in skin + new theme without borders
    + new (fast) slide setting, default active
    + difference between selected and focused items
    + reset text to title if defined
    + always set input hidden value
    + disabled state and disabled options
+   + original onchange attr visible on input hidden
   v0.8 by tanguy.pruvot@gmail.com (31 Aug 2010) :
    + width setting
    + autoresize the whole container
@@ -55,6 +56,7 @@
 
 		var self = this;
 		var isInsideForm = false;
+		var onchange;
 
 		var maxWidth;
 		var autoresize;
@@ -93,7 +95,7 @@
 		function layout() {
 			self.listWrapper.css('width', (self.maxWidth - (self.listWrapper.outerWidth(true) - self.listWrapper.width())) + 'px');
 			if (!self.autoresize) {
-				self.wrapper.parent().css('clear','both');
+				self.wrapper.css('clear','both');
 				self.option.css('display','block');
 				self.option.css('float','left');
 				self.drop.css('display','block');
@@ -106,7 +108,19 @@
 			//fix incorrect chars in possible values
 			return data.replace("<","&lt;").replace(">","&gt;");
 		}
-
+		
+		var text2js = function (data) {
+			//fix incorrect quote in possible values
+			data = (data !== null) ? data : '';
+			return data.replace("'","\'");
+		}
+		
+		var text2attr = function (data) {
+			//fix incorrect dbquote in attr value
+			data = (data !== null) ? data : '';
+			return data.replace('"','\"');
+		}
+		
 		var options2list = function (data) {
 			var output = '<ul>';
 			data.each(function () {
@@ -124,7 +138,7 @@
 		// PUBLIC METHODS
 
 		self.setValue = function (val, trigger) {
-			var item = self.listItems.find(">a[href='"+val.replace("'","\'")+"']").closest('li');
+			var item = self.listItems.find(">a[href='"+text2js(val)+"']").closest('li');
 			if (item.length <= 1) {
 				self.callTriggers = false;
 				if (self.get() != val && trigger) self.callTriggers = true;
@@ -324,7 +338,7 @@
 
 			self.close(1);
 			if (self.callTriggers) {
-				if (self.obj.attr('onchange')) {
+				if (self.onchange) {
 					//set "this.value"
 					self.obj.val(val); //firefox, chrome
 					self.obj.append( //IE8 doesnt want a value without selected <option>
@@ -380,6 +394,7 @@
 		self.obj.title = self.obj.attr('title') || '';
 		self.obj.width = self.obj.width();
 		self.maxWidth = self.maxWidth || self.obj.width;
+		self.onchange = self.obj[0].getAttribute('onchange');
 
 		// insert wrapper
 		var wrapperHtml = '<div class="' + self.obj.className + ' droplist"><div class="droplist-list"></div></div>';
@@ -418,7 +433,7 @@
 
 		// input hidden
 		if (isInsideForm) {
-			self.wrapper.append('<input type="hidden" name="' + self.obj.name + '" value="" />');
+			self.wrapper.append('<input type="hidden" name="' + self.obj.name + '" value="" onchange="'+text2attr(self.onchange)+'" />');
 		}
 
 		// GET ELEMENTS
