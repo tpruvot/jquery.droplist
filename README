@@ -12,6 +12,10 @@
 
 CHANGELOG :
 
+v1.1 by tanguy.pruvot@gmail.com (19 Sep 2010) :
+ + IE9 public beta compatible
+ * fixes for css width/height
+ 
 v1.0 by tanguy.pruvot@gmail.com (02 Sep 2010) :
  + Second call to .droplist() returns plugin instance
  + .droplist() results new created div(s)
