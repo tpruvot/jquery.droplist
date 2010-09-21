@@ -13,6 +13,7 @@ div { margin:auto; text-align:left; }
 hr, br { display:none; }
 
 /* Page */
+* { color:#666; }
 body { text-align:center; line-height:13px; padding:20px; }
 body, input, select, textarea { font-family:Arial, Helvetica, sans-serif; font-size:11px; color:#5D5850; }
 

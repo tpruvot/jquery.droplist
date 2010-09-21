@@ -1,5 +1,5 @@
 (function ($) {
-
+	
 	var DropList = function (el, settings, callback) {
 	
 		var self = this;
@@ -41,7 +41,7 @@
 		/* PUBLIC METHODS */
 		
 		self.open = function () {
-			
+		
 			// just show
 			self.listWrapper.show();
 			self.wrapper.addClass('droplist-active');
@@ -73,7 +73,7 @@
 				}
 			
 			}).bind('keyup', function (e) {
-				
+			
 				// get keycode
 				if (e === null) { // ie
 					keycode = event.keyCode;
@@ -96,20 +96,62 @@
 				
 				// type-ahead support
 				else if (keycode >= 0x30 && keycode <= 0x7a) {
-					self.typedKeys += '' + String.fromCharCode(keycode);
+				
+					// key char
+					var key = String.fromCharCode(keycode);
+					
+					// clear up
 					clearTimeout(self.typeDelay);
-					self.typeDelay = setTimeout(function () {
+					
+					var loop = function () {
+						
 						self.listItems.each(function () {
-							var a = $(this).find('>a');
-							if (a.text().toUpperCase().indexOf(self.typedKeys) === 0) {
+							var link = $(this).find('>a');
+							if (link.text().toUpperCase().indexOf(self.typedKeys) === 0) {
 								self.listItems.removeClass('selected');
 								$(this).addClass('selected');
-								a.focus();
+								link.focus();
 								return false;
 							}
 						});
-						self.typedKeys = '';
-					}, 400);
+					
+					};
+					
+					// typing a letter repeatedly
+					if (self.typedKeys == key) {
+					
+						clearTimeout(self.typeDelay);
+						
+						var cur = self.list.find('.selected:first'),
+							next = cur.next(),
+							link = next.find('>a');
+						
+						if (link.text().toUpperCase().substr(0, 1) == self.typedKeys) {
+							cur.removeClass('selected');
+							next.addClass('selected');
+							link.focus();
+						}
+						
+						else {
+							loop();
+						}
+					
+					}
+					
+					// typing a word
+					if (self.typedKeys != key || self.typedKeys.length > 1) {
+						
+						self.typedKeys += '' + key;
+						
+						self.typeDelay = setTimeout(function () {
+							loop();
+							self.typedKeys = '';
+						}, 400);
+						
+					}
+					
+					
+				
 				}
 			
 			});
@@ -117,9 +159,11 @@
 		};
 		
 		self.close = function () {
+			
 			self.listWrapper.hide();
 			self.wrapper.removeClass('droplist-active')
 			$('html').unbind('click').unbind('keyup');
+		
 		};
 		
 		self.set = function (el) {
