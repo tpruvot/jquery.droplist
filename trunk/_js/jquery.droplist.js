@@ -18,7 +18,9 @@
 			var h1 = settings.height || 150,
 				h2 = self.listWrapper.height();
 			if (h2 > h1) {
-				self.list.css('height', h1 + 'px').jScrollPane({showArrows:false});
+				self.list.css('height', h1 + 'px').jScrollPane({
+					showArrows: false
+				});
 			}
 		}
 		
@@ -31,7 +33,7 @@
 			var output = '<ul>';
 			data.each(function () {
 				var selected = $(this).attr('selected') ? 'selected' : '';
-				output += '<li class="' + selected +'"><a href="' + $(this).val() + '">' + $(this).text() + '</a></li>\t';
+				output += '<li class="' + selected + '"><a href="' + $(this).val() + '">' + $(this).text() + '</a></li>\t';
 			});
 			output += '</ul>';
 			return output;
@@ -75,12 +77,26 @@
 			}).bind('keyup', function (e) {
 			
 				// get keycode
+				var keycode = null;
 				if (e === null) { // ie
 					keycode = event.keyCode;
 				}
 				else { // mozilla
 					keycode = e.which;
 				}
+				
+				// helper
+				var search = function () {
+						
+					self.listItems.each(function () {
+						var link = $(this).find('>a');
+						if (link.text().toUpperCase().indexOf(self.typedKeys) === 0) {
+							self.set($(this), false);
+							return false;
+						}
+					});
+				
+				};
 			
 				// esc
 				if (keycode === 27) {
@@ -91,7 +107,7 @@
 				else if (keycode === 32) {
 					var focused = $('a:focus'),
 						current = (focused.parent().is('li')) ? focused.parent() : self.listItems.first();
-					self.set(current);
+					self.set(current, true);
 				}
 				
 				// type-ahead support
@@ -103,54 +119,33 @@
 					// clear up
 					clearTimeout(self.typeDelay);
 					
-					var loop = function () {
-						
-						self.listItems.each(function () {
-							var link = $(this).find('>a');
-							if (link.text().toUpperCase().indexOf(self.typedKeys) === 0) {
-								self.listItems.removeClass('selected');
-								$(this).addClass('selected');
-								link.focus();
-								return false;
-							}
-						});
-					
-					};
-					
 					// typing a letter repeatedly
-					if (self.typedKeys == key) {
+					if (self.typedKeys === key) {
 					
-						clearTimeout(self.typeDelay);
-						
 						var cur = self.list.find('.selected:first'),
 							next = cur.next(),
 							link = next.find('>a');
 						
-						if (link.text().toUpperCase().substr(0, 1) == self.typedKeys) {
-							cur.removeClass('selected');
-							next.addClass('selected');
-							link.focus();
+						if (link.text().toUpperCase().substr(0, 1) === self.typedKeys) {
+							self.set(next, false);
 						}
-						
 						else {
-							loop();
+							search();
 						}
 					
 					}
 					
 					// typing a word
-					if (self.typedKeys != key || self.typedKeys.length > 1) {
-						
-						self.typedKeys += '' + key;
+					else {
+					
+						self.typedKeys += key + '';
 						
 						self.typeDelay = setTimeout(function () {
-							loop();
+							search();
 							self.typedKeys = '';
-						}, 400);
-						
+						}, 300);
+					
 					}
-					
-					
 				
 				}
 			
@@ -161,24 +156,35 @@
 		self.close = function () {
 			
 			self.listWrapper.hide();
-			self.wrapper.removeClass('droplist-active')
+			self.wrapper.removeClass('droplist-active');
 			$('html').unbind('click').unbind('keyup');
 		
 		};
 		
-		self.set = function (el) {
+		self.set = function (el, close) {
+		
+			var el = $(el),
+				link = el.find('>a'),
+				text = link.text();
 			
-			var str = $(el).find('>a').text();
-			setText(str);
-			self.listItems.removeClass('selected').filter(el).addClass('selected');
+			setText(text);
+			
+			self.listItems.removeClass('selected');
+			el.addClass('selected');
 		
 			if (self.inputHidden.length > 0) {
 				var val = el.find('a').attr('href');
 				self.inputHidden.attr('value', val);
 			}
 			
-			self.close();
+			if (close == true) {
+				self.close();
+			} else {
+				link.focus();
+			}
+			
 			self.obj.trigger('droplistchange', self);
+		
 		};
 		
 		self.get = function () {
@@ -188,7 +194,7 @@
 		self.tabs = function () {
 			var that = this;
 			that.list.find('li').bind('click', function () {
-				that.set(this);
+				that.set(this, true);
 				var id = $(this).find('a').attr('href');
 				$(id).removeClass('hide').show().siblings().hide();
 				return false;
@@ -197,7 +203,6 @@
 	
 	
 		// CONTROLLER
-		
 		self.obj = $(el);
 		self.obj.css('border','none');
 		
@@ -245,12 +250,14 @@
 			self.wrapper.append('<input type="hidden" name="' + self.obj.name + '" value="" />');
 		}
 		
+		
 		// GET ELEMENTS
 		self.listItems = self.list.find('li');
 		self.select = self.wrapper.find('.droplist-value:first');
 		self.option = self.select.find('div:first');
 		self.drop = self.select.find('a:first');
 		self.inputHidden = self.wrapper.find('input[type=hidden]:first');
+		
 		
 		// EVENTS
 		
@@ -267,7 +274,7 @@
 		if (isInsideForm) {
 			self.list.find('a').bind('click', function () {
 				var parent = $(this).parent();
-				self.set(parent);
+				self.set(parent, true);
 				return false;
 			});
 		}
@@ -286,23 +293,27 @@
 		// set selected
 		var selectedItem = self.list.find('.selected:first');
 		if (selectedItem.length === 1) {
-			self.set(selectedItem);
+			self.set(selectedItem, true);
 		}
 		else {
-			self.set(self.list.find('li:first'));
+			self.set(self.list.find('li:first'), true);
 		}
 		
 		// title
-		if (self.obj.title !== '') { setText(self.obj.title); }
+		if (self.obj.title !== '') {
+			setText(self.obj.title);
+		}
 		
 		// CALLBACK
-		if (typeof callback == 'function') { callback.apply(self); }
+		if (typeof callback == 'function') {
+			callback.apply(self);
+		}
 	
 	};
 
 	// extend jQuery
 	$.fn.droplist = function (settings, callback) {
-		return this.each(function (){
+		return this.each(function () {
 			var obj = $(this);
 			if (obj.data('droplist')) return; // return early if this obj already has a plugin instance
 			var instance = new DropList(this, settings, callback);

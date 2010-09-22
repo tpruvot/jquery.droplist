@@ -12,7 +12,7 @@ function samples() {
 	jQuery('.droplist-by-list').droplist(settings, function() {
 		var that = this;
 		that.list.find('li').bind('click', function() {
-			that.set(this);
+			that.set(this, true);
 			return false;
 		});
 	});
@@ -27,7 +27,7 @@ function samples() {
 		var that = this;
 		that.list.find('a').bind('click', function() {
 			var item = $(this).parent();
-			that.set(item);
+			that.set(item, true);
 			return false;
 		});
 	}).bind('droplistchange', function() {
