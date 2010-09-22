@@ -39,8 +39,19 @@
 			return output;
 		};
 		
-		
 		/* PUBLIC METHODS */
+		
+		self.setByChar = function (chars) {
+			
+			self.listItems.each(function () {
+				var link = $(this).find('>a');
+				if (link.text().toUpperCase().indexOf(chars) === 0) {
+					self.set($(this), false);
+					return false;
+				}
+			});
+		
+		}
 		
 		self.open = function () {
 		
@@ -85,19 +96,6 @@
 					keycode = e.which;
 				}
 				
-				// helper
-				var search = function () {
-						
-					self.listItems.each(function () {
-						var link = $(this).find('>a');
-						if (link.text().toUpperCase().indexOf(self.typedKeys) === 0) {
-							self.set($(this), false);
-							return false;
-						}
-					});
-				
-				};
-			
 				// esc
 				if (keycode === 27) {
 					self.close();
@@ -126,11 +124,11 @@
 							next = cur.next(),
 							link = next.find('>a');
 						
-						if (link.text().toUpperCase().substr(0, 1) === self.typedKeys) {
+						if (link.text().toUpperCase().indexOf(self.typedKeys) === 0) {
 							self.set(next, false);
 						}
 						else {
-							search();
+							self.setByChar(self.typedKeys);
 						}
 					
 					}
@@ -138,11 +136,15 @@
 					// typing a word
 					else {
 					
+						// concatenate
 						self.typedKeys += key + '';
 						
+						// wait user to finish typing
 						self.typeDelay = setTimeout(function () {
-							search();
+							
+							self.setByChar(self.typedKeys);
 							self.typedKeys = '';
+						
 						}, 300);
 					
 					}
@@ -315,7 +317,9 @@
 	$.fn.droplist = function (settings, callback) {
 		return this.each(function () {
 			var obj = $(this);
-			if (obj.data('droplist')) return; // return early if this obj already has a plugin instance
+			if (obj.data('droplist')) {
+				return; // return early if this obj already has a plugin instance
+			}
 			var instance = new DropList(this, settings, callback);
 			obj.data('droplist', instance);
 		});
