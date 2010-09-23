@@ -1,47 +1,49 @@
-jQuery(document).ready(samples);
+var samples = function () {
 
-function samples() {
-
-	// GENERIC CONFIGURATION
+	// generic settings
 	var settings = {
 		customScroll: true,
 		height: 150
-	}
+	};
 
-	// BY LIST
-	jQuery('.droplist-by-list').droplist(settings, function() {
+	// by list
+	jQuery('.droplist-by-list').droplist(settings, function () {
 		var that = this;
-		that.list.find('li').bind('click', function() {
-			that.set(this, true);
+		that.list.find('li').bind('click', function () {
+			that.set(this);
+			that.close();
 			return false;
 		});
 	});
 	
-	// BY LIST -  TABS
-	jQuery('.droplist-by-list-tabs').droplist(settings, function() {
+	// ly list - tabs
+	jQuery('.droplist-by-list-tabs').droplist(settings, function () {
 		this.tabs();
 	});
 	
-	// BY LIST - DROPLISTCHANGE
-	jQuery('.droplist-by-list-onchange').droplist(settings, function() {
+	// by list - onchange
+	jQuery('.droplist-by-list-change').droplist(settings, function () {
 		var that = this;
-		that.list.find('a').bind('click', function() {
-			var item = $(this).parent();
-			that.set(item, true);
+		that.list.find('a').bind('click', function () {
+			var item = jQuery(this).parent();
+			that.set(item);
+			that.close();
 			return false;
 		});
-	}).bind('droplistchange', function() {
-		var val = $(this).data('droplist').get();
+	}).bind('change', function () {
+		var val = jQuery(this).data('droplist').get();
 		alert('changed to ' + val);
 	});
 	
-	// BY SELECT
+	// by select
 	jQuery('.droplist-by-select').droplist(settings);
 	
-	// BY SELECT - COMBOBOXCHANGE
-	jQuery('.droplist-by-select-onchange').droplist(settings).bind('droplistchange', function() {
-		var val = $(this).data('droplist').get();
+	// by select - onchange
+	jQuery('.droplist-by-select-change').droplist(settings).bind('change', function () {
+		var val = jQuery(this).data('droplist').get();
 		alert('changed to ' + val);
 	});
 	
 };
+
+jQuery(document).ready(samples);

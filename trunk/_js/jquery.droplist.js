@@ -1,10 +1,14 @@
 (function ($) {
 	
-	var DropList = function (el, settings, callback) {
+	var DropList = function (element, settings, callback) {
 	
 		var self = this;
 		
-		//SETTINGS
+		/*
+		SETTINGS
+		==============================================================================
+		*/
+		
 		settings = settings || {};
 		settings.direction = settings.direction || 'auto';
 		settings.namespaces = settings.namespaces || {
@@ -12,7 +16,11 @@
 			clickout: 'droplistClickout'
 		};
 		
-		// PRIVATE METHODS
+		
+		/*
+		PRIVATE METHODS
+		==============================================================================
+		*/
 		
 		function setText(str) {
 			self.option.html(str);
@@ -43,7 +51,11 @@
 			return output;
 		};
 		
-		/* PUBLIC METHODS */
+		
+		/*
+		PUBLIC METHODS
+		==============================================================================
+		*/
 		
 		self.open = function () {
 		
@@ -70,7 +82,7 @@
 			// events (clickout / ESC key / type-ahead)
 			self.typedKeys = '';
 			
-			$('html').bind('click.' + settings.namespaces.clickout, function (e) {
+			$(document).bind('click.' + settings.namespaces.clickout, function (e) {
 				
 				// clickout
 				if ($(e.target).closest('.droplist').length === 0) {
@@ -97,7 +109,8 @@
 				else if (keycode === 32) {
 					var focused = $('a:focus'),
 						current = (focused.parent().is('li')) ? focused.parent() : self.listItems.first();
-					self.set(current, true);
+					self.set(current);
+					self.close();
 				}
 				
 				// type-ahead support
@@ -117,7 +130,7 @@
 							link = next.find('>a');
 						
 						if (link.text().toUpperCase().indexOf(self.typedKeys) === 0) {
-							self.set(next, false);
+							self.set(next);
 						}
 						else {
 							self.setBySearch(self.typedKeys);
@@ -153,34 +166,31 @@
 			
 			self.listWrapper.hide();
 			self.wrapper.removeClass('droplist-active');
-			$('html').unbind('click').unbind('keyup');
+			$(document).unbind('.' + settings.namespaces.clickout);
 			
 			self.obj.trigger('close.' + settings.namespaces.droplist, self);
 		
 		};
 		
-		self.set = function (el, close) {
+		self.set = function (el) {
 		
 			var el = $(el),
 				link = el.find('>a'),
 				text = link.text();
 			
-			setText(text);
-			
 			self.listItems.removeClass('selected');
 			el.addClass('selected');
+			
+			setText(text);
 		
 			if (self.inputHidden.length > 0) {
 				var val = el.find('a').attr('href');
 				self.inputHidden.attr('value', val);
 			}
 			
-			if (close == true) {
-				self.close();
-			} else {
-				el.focus();
-			}
+			//link.focusin();
 			
+			// trigger
 			self.obj.trigger('change.' + settings.namespaces.droplist, self);
 		
 		};
@@ -188,14 +198,11 @@
 		self.setBySearch = function (q) {
 			
 			self.listItems.each(function () {
-				console.log('a');
-				/*
 				var link = $(this).find('>a');
 				if (link.text().toUpperCase().indexOf(q) === 0) {
-					self.set(this, false);
+					self.set(this);
 					return false;
 				}
-				*/
 			});
 		
 		};
@@ -204,22 +211,32 @@
 			return self.list.find('.selected:first a').attr('href');
 		};
 		
+		
+		/*
+		HELPERS
+		==============================================================================
+		*/
+		
 		self.tabs = function () {
 			var that = this;
 			that.list.find('li').bind('click', function () {
-				that.set(this, true);
+				that.set(this);
+				that.close();
 				var id = $(this).find('a').attr('href');
 				$(id).removeClass('hide').show().siblings().hide();
 				return false;
 			});
 		};
-	
-	
-		// CONTROLLER
-		self.obj = $(el);
-		self.obj.css('border','none');
+
+
+		/*
+		CONTROLLER
+		==============================================================================
+		*/
 		
-		self.obj.className = self.obj.attr('class');
+		self.obj = $(element);
+		self.obj.css('border','none');
+		self.obj.classname = self.obj.attr('class');
 		self.obj.name = self.obj.attr('name');
 		self.obj.width = self.obj.width();
 		self.obj.title = self.obj.attr('title');
@@ -227,7 +244,7 @@
 		var isInsideForm = false;
 		
 		// insert wrapper
-		var wrapperHtml = '<div class="' + self.obj.className + '"><div class="droplist-list"></div></div>';
+		var wrapperHtml = '<div class="' + self.obj.classname + '"><div class="droplist-list"></div></div>';
 		
 		// get elements
 		self.wrapper = self.obj.removeAttr('class').wrap(wrapperHtml).parent().parent();
@@ -236,10 +253,13 @@
 		
 		// case it's a SELECT tag, not a UL
 		if (self.list.length === 0) {
+			
 			isInsideForm = true;
-				var html = '',
+			
+			var html = '',
 				optgroups = self.listWrapper.find('select:first optgroup'),
 				options;
+			
 			if (optgroups.length > 0) {
 				html += '<ul>';
 				optgroups.each(function () {
@@ -251,8 +271,12 @@
 				options = self.listWrapper.find('select:first option');
 				html += options2list(options);
 			}
+			
 			self.listWrapper.html(html);
+			
+			// override list
 			self.list = self.listWrapper.find('ul:first');
+		
 		}
 		
 		// insert HTML into the wrapper
@@ -272,7 +296,10 @@
 		self.inputHidden = self.wrapper.find('input[type=hidden]:first');
 		
 		
-		// EVENTS
+		/*
+		EVENTS
+		==============================================================================
+		*/
 		
 		// clicking on select
 		self.select.bind('click', function () {
@@ -287,7 +314,8 @@
 		if (isInsideForm) {
 			self.list.find('a').bind('click', function () {
 				var parent = $(this).parent();
-				self.set(parent, true);
+				self.set(parent);
+				self.close();
 				return false;
 			});
 		}
@@ -306,10 +334,12 @@
 		// set selected
 		var selectedItem = self.list.find('.selected:first');
 		if (selectedItem.length === 1) {
-			self.set(selectedItem, true);
+			self.set(selectedItem);
+			self.close();
 		}
 		else {
-			self.set(self.list.find('li:first'), true);
+			self.set(self.list.find('li:first'));
+			self.close();			
 		}
 		
 		// title
@@ -321,21 +351,31 @@
 		if (typeof callback == 'function') {
 			callback.apply(self);
 		}
+		
+		self.wrapper.data('instanced', true);
+		return self;
 	
 	};
 
-	// extend jQuery
+	
+	/*
+	INSTANCES MANAGER
+	==============================================================================
+	*/
+	
 	$.fn.droplist = function (settings, callback) {
 		return this.each(function () {
-			var obj = $(this);
 			
-			if (obj.data('droplist')) {
-				return obj.data('droplist');
+			var obj = $(this),
+				instance = null;
+			
+			if (obj.data('instanced')) {
+				return obj;
 			}
-			
-			var instance = new DropList(this, settings, callback);
+				
+			instance = new DropList(this, settings, callback);
 			obj.data('droplist', instance);
-		
+			
 		});
 	};
 

@@ -14,9 +14,10 @@ ul.droplist, select.droplist { visibility:hidden; overflow:hidden; }
 .droplist-up .droplist-list { top:auto; bottom:14px; }
 .droplist .droplist-list ul li { _height:0; }
 .droplist .droplist-list ul li > a, .droplist .droplist-list ul li strong { display:block; padding:4px 10px; color:#47423A; text-decoration:none; }
-.droplist .droplist-list ul li.selected > a, .droplist .droplist-list ul li > a:hover {color:#6688EE;}
+.droplist .droplist-list ul li.selected > a, .droplist .droplist-list ul li > a:hover {color:#666;}
 .droplist .droplist-list ul li > a:hover, .droplist .droplist-list ul li > a:focus { background-color:#F7F7F7; }
 .droplist .droplist-list ul li.selected > a { background-color:#EEE; }
+.droplist .droplist-list ul li.selected > a:hover, .droplist .droplist-list ul li.selected > a:focus { background:#DDD; }
 .droplist .droplist-list ul li ul li a { padding:2px 10px 2px 20px; }
 
 
