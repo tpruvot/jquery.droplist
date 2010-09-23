@@ -7,6 +7,10 @@
 		//SETTINGS
 		settings = settings || {};
 		settings.direction = settings.direction || 'auto';
+		settings.namespaces = settings.namespaces || {
+			droplist: 'droplist',
+			clickout: 'droplistClickout'
+		};
 		
 		// PRIVATE METHODS
 		
@@ -66,14 +70,14 @@
 			// events (clickout / ESC key / type-ahead)
 			self.typedKeys = '';
 			
-			$('html').bind('click', function (e) {
+			$('html').bind('click.' + settings.namespaces.clickout, function (e) {
 				
 				// clickout
 				if ($(e.target).closest('.droplist').length === 0) {
 					self.close();
 				}
 			
-			}).bind('keyup', function (e) {
+			}).bind('keyup.' + settings.namespaces.clickout, function (e) {
 			
 				// get keycode
 				var keycode = null;
@@ -140,6 +144,8 @@
 				}
 			
 			});
+			
+			self.obj.trigger('open.' + settings.namespaces.droplist, self);
 		
 		};
 		
@@ -148,6 +154,8 @@
 			self.listWrapper.hide();
 			self.wrapper.removeClass('droplist-active');
 			$('html').unbind('click').unbind('keyup');
+			
+			self.obj.trigger('close.' + settings.namespaces.droplist, self);
 		
 		};
 		
@@ -168,26 +176,29 @@
 			}
 			
 			if (close == true) {
-				//self.close();
+				self.close();
 			} else {
 				el.focus();
 			}
 			
-			//self.obj.trigger('droplistchange', self);
+			self.obj.trigger('change.' + settings.namespaces.droplist, self);
 		
 		};
 		
 		self.setBySearch = function (q) {
 			
 			self.listItems.each(function () {
+				console.log('a');
+				/*
 				var link = $(this).find('>a');
 				if (link.text().toUpperCase().indexOf(q) === 0) {
 					self.set(this, false);
 					return false;
 				}
+				*/
 			});
 		
-		}
+		};
 		
 		self.get = function () {
 			return self.list.find('.selected:first a').attr('href');
@@ -318,7 +329,6 @@
 		return this.each(function () {
 			var obj = $(this);
 			
-			console.log(obj.data('droplist'));
 			if (obj.data('droplist')) {
 				return obj.data('droplist');
 			}
