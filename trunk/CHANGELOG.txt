@@ -1,0 +1,5 @@
+v0.4 CHANGELOG
+- add support to disabled attribute
+- added style for :target (default skin)
+- typeahead support (key pressed repeatedly)
+- arrow flip when active/focus

@@ -188,8 +188,6 @@
 				self.inputHidden.attr('value', val);
 			}
 			
-			//link.focusin();
-			
 			// trigger
 			self.obj.trigger('change.' + settings.namespaces.droplist, self);
 		
@@ -236,15 +234,22 @@
 		
 		self.obj = $(element);
 		self.obj.css('border','none');
+		
+		self.obj.id = self.obj.attr('id');
 		self.obj.classname = self.obj.attr('class');
 		self.obj.name = self.obj.attr('name');
 		self.obj.width = self.obj.width();
 		self.obj.title = self.obj.attr('title');
 		
-		var isInsideForm = false;
+		var isInsideForm = false,
+			isDisabled = (self.obj.attr('disabled') == true);
+			
+		if (isDisabled) {
+			self.obj.classname += ' droplist-disabled';
+		}
 		
 		// insert wrapper
-		var wrapperHtml = '<div class="' + self.obj.classname + '"><div class="droplist-list"></div></div>';
+		var wrapperHtml = '<div id="' + self.obj.id + '" class="' + self.obj.classname + '"><div class="droplist-list"></div></div>';
 		
 		// get elements
 		self.wrapper = self.obj.removeAttr('class').wrap(wrapperHtml).parent().parent();
@@ -280,7 +285,7 @@
 		}
 		
 		// insert HTML into the wrapper
-		self.wrapper.prepend('<div class="droplist-value"><a href="#nogo"></a><div></div></div>');
+		self.wrapper.prepend('<div class="droplist-value"><a href="javascript:void(0);"></a><div></div></div>');
 		
 		// input hidden
 		if (isInsideForm) {
@@ -301,23 +306,36 @@
 		==============================================================================
 		*/
 		
-		// clicking on select
-		self.select.bind('click', function () {
-			if (self.listWrapper.is(':hidden')) {
-				self.open();
-			} else {
-				self.close();
-			}
-		});
+		if (isDisabled == false) {
 		
-		// clicking on an option inside a form
-		if (isInsideForm) {
-			self.list.find('a').bind('click', function () {
-				var parent = $(this).parent();
-				self.set(parent);
-				self.close();
-				return false;
+			// clicking on select
+			self.select.bind('click', function () {
+				if (self.listWrapper.is(':hidden')) {
+					self.open();
+				} else {
+					self.close();
+				}
 			});
+		
+			if (isInsideForm) {
+				
+				// clicking on an option inside a form
+				self.list.find('a').bind('click', function () {
+					var parent = $(this).parent();
+					self.set(parent);
+					self.close();
+					return false;
+				});
+				
+				// label correlation
+				if (self.obj.id) {
+					self.wrapper.parents('form').find('label[for="' + self.obj.id + '"]').bind('click', function () {
+						self.drop.focus();
+					});
+				}
+			
+			}
+		
 		}
 		
 		// ADJUST LAYOUT (WIDTHS)

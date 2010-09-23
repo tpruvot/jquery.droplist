@@ -30,7 +30,7 @@ var samples = function () {
 			that.close();
 			return false;
 		});
-	}).bind('change', function () {
+	}).bind('change.droplist', function () {
 		var val = jQuery(this).data('droplist').get();
 		alert('changed to ' + val);
 	});
@@ -39,7 +39,7 @@ var samples = function () {
 	jQuery('.droplist-by-select').droplist(settings);
 	
 	// by select - onchange
-	jQuery('.droplist-by-select-change').droplist(settings).bind('change', function () {
+	jQuery('.droplist-by-select-change').droplist(settings).bind('change.droplist', function () {
 		var val = jQuery(this).data('droplist').get();
 		alert('changed to ' + val);
 	});

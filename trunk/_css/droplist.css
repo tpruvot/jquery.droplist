@@ -1,15 +1,21 @@
 /* DropList */
-.hide { display:none; }
-ul.droplist, select.droplist { visibility:hidden; overflow:hidden; }
-.droplist { position:relative; min-width:40px; max-width:320px; height:17px; margin:0; padding:0; color:#FFFFFF; font-size:11px; font-weight:bold; }
+ul.droplist, select.droplist { visibility:hidden; overflow:hidden; border:0; }
+.droplist { position:relative; width:100%; min-width:40px; max-width:320px; height:17px; margin:0; padding:0; color:#FFFFFF; font-size:11px; font-weight:bold; }
 .droplist .droplist-value { position:relative; line-height:17px; cursor:pointer; z-index:3003; }
 .droplist .droplist-value div { display:block; float:left; height:17px; padding-left:6px; margin-right:1px; color:#FFF; background:url(../_img/droplist.png) 0 -30px no-repeat; overflow:hidden; }
 .droplist .droplist-value a {display:block; float:right; width:20px; height:17px; background:url(../_img/droplist.png) -30px -90px no-repeat; outline:none; text-indent:-9999px; }
-.droplist-active { z-index:9999999; }
-.droplist-active div { background-position:0 -60px !important; outline:none; }
-.droplist a:focus ~ div { background-position:0 -60px !important; outline:none; } /* keep isolated from previous selector, 'cause IE6 has a bug */
-.droplist-active a, .droplist a:focus { background-position:-60px -90px !important; }
-.droplist .droplist-list { position:absolute; top:14px; padding:4px; border:3px solid #6688EE; background:#FFF; z-index:3002; }
+
+.droplist-active { z-index:9999; }
+.droplist:target div, .droplist-active div { background-position:0 -60px !important; outline:none; }
+.droplist a:focus + div { background-position:0 -60px !important; outline:none; } /* keep isolated from previous selector, 'cause IE6 has a bug */
+.droplist:target a, .droplist a:focus { background-position:-60px -90px !important; }
+.droplist-active a, .droplist-active a:focus { background-position:-90px -90px !important; }
+
+.droplist-disabled div { background-position:0 0 !important; }
+.droplist-disabled a:focus + div { background-position:0 0 !important; }
+.droplist-disabled a, .droplist-disabled a:focus { background-position:0 -90px !important; }
+
+.droplist .droplist-list { position:absolute; left:0; top:14px; padding:4px; border:3px solid #6688EE; background:#FFF; z-index:3002; }
 .droplist:focus .droplist-list { display:block; }
 .droplist-up .droplist-list { top:auto; bottom:14px; }
 .droplist .droplist-list ul li { _height:0; }

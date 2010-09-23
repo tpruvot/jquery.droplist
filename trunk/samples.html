@@ -154,10 +154,10 @@
 				<li><a href="#ctn-bing">Bing</a></li>
 			</ul>
 			<div class="tabs">
-				<div id="ctn-google" class="hide">Google search is a web search engine owned by Google Inc. and is the most-used search engine on the Web.</div>
-				<div id="ctn-yahoo" class="hide">Yahoo! Inc. is an American public corporation headquartered in Sunnyvale, California, (in Silicon Valley), that provides Internet services.</div>
-				<div id="ctn-ask" class="hide">Ask.com (or Ask Jeeves in the United Kingdom) is a search engine started in 1996 by Garrett Gruener and David Warthen in Berkeley, California.</div>
-				<div id="ctn-bing" class="hide">Bing (formerly Live Search, Windows Live Search, and MSN Search) is the current web search engine from Microsoft.</div>
+				<div id="ctn-google" style="display:none">Google search is a web search engine owned by Google Inc. and is the most-used search engine on the Web.</div>
+				<div id="ctn-yahoo" style="display:none">Yahoo! Inc. is an American public corporation headquartered in Sunnyvale, California, (in Silicon Valley), that provides Internet services.</div>
+				<div id="ctn-ask" style="display:none">Ask.com (or Ask Jeeves in the United Kingdom) is a search engine started in 1996 by Garrett Gruener and David Warthen in Berkeley, California.</div>
+				<div id="ctn-bing" style="display:none">Bing (formerly Live Search, Windows Live Search, and MSN Search) is the current web search engine from Microsoft.</div>
 			</div>
 		</div>
 
@@ -172,7 +172,6 @@
 		<hr />
 
 		<div class="sample">
-			<h2>Simple</h2>
 			<form method="get" action="">
 				<fieldset>
 					<label for="droplist-by-select-1">Label</label>
@@ -198,7 +197,7 @@
 			<h2>Default text</h2>
 			<form method="get" action="">
 				<fieldset>
-					<select name="comboName" class="droplist droplist-by-select" title="Choose an item">
+					<select id="droplist-by-select-2" name="comboName" class="droplist droplist-by-select" title="Choose an item">
 						<option value="0">Google</option>
 						<option value="1">Yahoo</option>
 						<option value="2">Ask</option>
@@ -337,6 +336,20 @@
 						<option value="www.bing.com">Bing</option>
 					</select>
 					<input type="submit" name="action" value="Send" />
+				</fieldset>
+			</form>
+		</div>
+		
+		<div class="sample">
+			<h2>Disabled</h2>
+			<form method="get" action="">
+				<fieldset>
+					<select disabled="disabled" name="comboName" class="droplist droplist-by-select">
+						<option value="www.google.com">Google</option>
+						<option value="www.yahoo.com">Yahoo</option>
+						<option value="www.ask.com">Ask</option>
+						<option value="www.bing.com">Bing</option>
+					</select>
 				</fieldset>
 			</form>
 		</div>

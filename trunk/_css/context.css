@@ -23,10 +23,8 @@ h1 { font-size:20px; margin:0 0 20px 0; }
 /* Boxes */
 
 .col { width:30%; padding:0 0 0 5%; float:left; }
-.col h2 { margin:0 0 0.5em 0; }
-.col .droplist { width:300px; }
-.col select { width:100%; }
+.col h2, .col label { display:block; margin:0 0 0.5em 0; font-size:12px; font-weight:bold;color:#666; }
 
 .sample { margin:0 0 20px 0; }
 
-.tabs div { margin:1px 0 0 0; padding:5px; background:#BEB7AF; color:#FFF; }
+.tabs div { width:310px; margin:1px 0 0 0; padding:5px; background:#333; color:#FFF; }
