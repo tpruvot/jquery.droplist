@@ -7,7 +7,7 @@ ul.droplist, select.droplist { visibility:hidden; overflow:hidden; border:0; }
 
 .droplist-active { z-index:9999; }
 .droplist:target div, .droplist-active div { background-position:0 -60px !important; outline:none; }
-.droplist a:focus + div { background-position:0 -60px !important; outline:none; } /* keep isolated from previous selector, 'cause IE6 has a bug */
+.droplist a:focus + div { background-position:0 -60px !important; outline:none; }
 .droplist:target a, .droplist a:focus { background-position:-60px -90px !important; }
 .droplist-active a, .droplist-active a:focus { background-position:-90px -90px !important; }
 
