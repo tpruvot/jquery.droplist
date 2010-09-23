@@ -41,18 +41,6 @@
 		
 		/* PUBLIC METHODS */
 		
-		self.setByChar = function (chars) {
-			
-			self.listItems.each(function () {
-				var link = $(this).find('>a');
-				if (link.text().toUpperCase().indexOf(chars) === 0) {
-					self.set($(this), false);
-					return false;
-				}
-			});
-		
-		}
-		
 		self.open = function () {
 		
 			// just show
@@ -128,7 +116,7 @@
 							self.set(next, false);
 						}
 						else {
-							self.setByChar(self.typedKeys);
+							self.setBySearch(self.typedKeys);
 						}
 					
 					}
@@ -142,7 +130,7 @@
 						// wait user to finish typing
 						self.typeDelay = setTimeout(function () {
 							
-							self.setByChar(self.typedKeys);
+							self.setBySearch(self.typedKeys);
 							self.typedKeys = '';
 						
 						}, 300);
@@ -180,14 +168,26 @@
 			}
 			
 			if (close == true) {
-				self.close();
+				//self.close();
 			} else {
-				link.focus();
+				el.focus();
 			}
 			
-			self.obj.trigger('droplistchange', self);
+			//self.obj.trigger('droplistchange', self);
 		
 		};
+		
+		self.setBySearch = function (q) {
+			
+			self.listItems.each(function () {
+				var link = $(this).find('>a');
+				if (link.text().toUpperCase().indexOf(q) === 0) {
+					self.set(this, false);
+					return false;
+				}
+			});
+		
+		}
 		
 		self.get = function () {
 			return self.list.find('.selected:first a').attr('href');
@@ -317,11 +317,15 @@
 	$.fn.droplist = function (settings, callback) {
 		return this.each(function () {
 			var obj = $(this);
+			
+			console.log(obj.data('droplist'));
 			if (obj.data('droplist')) {
-				return; // return early if this obj already has a plugin instance
+				return obj.data('droplist');
 			}
+			
 			var instance = new DropList(this, settings, callback);
 			obj.data('droplist', instance);
+		
 		});
 	};
 
