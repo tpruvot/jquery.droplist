@@ -37,6 +37,7 @@
 .droplist .droplist-list { position:absolute; top:21px; padding:1px; z-index:3002; }
 .droplist:focus .droplist-list { display:block; }
 .droplist-up .droplist-list { top:auto; bottom:21px; }
+.droplist .droplist-list select { display:none; }
 .droplist .droplist-list ul li { list-style-type: none; _height:0; }
 .droplist .droplist-list ul li strong { display:block; padding:1px; color:#47423A; }
 .droplist .droplist-list ul li span { display:block; padding:1px; }

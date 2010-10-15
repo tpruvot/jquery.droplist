@@ -70,7 +70,7 @@
 			}
 		}
 
-		function layout() {
+		function layoutController() {
 			//listWrapper visible at this state, we can get padding widths;
 			wx_lst = self.listWrapper.outerWidth() - self.listWrapper.width();
 			wx_opt = self.option.outerWidth() - self.option.width();
@@ -314,8 +314,10 @@
 			}
 
 			setText(str);
-			if (self.inputHidden.length) {
-				self.inputHidden.attr('value', val);
+			//if (self.inputHidden.length) {
+			if (self.originalSelect.length > 0) {
+				//self.inputHidden.attr('value', val);
+				self.originalSelect.find("option[value$='" + val + "']").attr('selected', 'selected');
 			}
 
 			self.close(1);
@@ -341,9 +343,11 @@
 				if (self.onchange) {
 					//set "this.value"
 					self.obj.val(val); //firefox, chrome
+					
 					self.obj.html( //IE8 doesnt want a value without selected <option>
 						$('<option selected="selected"></option>').val(val).html('')
 					);
+					
 					self.obj.trigger('onchange');
 				} else {
 					self.obj.trigger('droplistchange', self);
@@ -392,7 +396,8 @@
 		if (self.list.length === 0) {
 			isInsideForm = true;
 			var html = '',
-				optgroups = self.listWrapper.find('select:first optgroup'),
+				select = self.listWrapper.find('select:first'),
+				optgroups = select.find('optgroup'),
 				options;
 			if (optgroups.length > 0) {
 				html += '<ul>';
@@ -405,7 +410,8 @@
 				options = self.listWrapper.find('select:first option');
 				html += options2list(options);
 			}
-			self.listWrapper.html(html);
+			
+			self.listWrapper.append(html);
 			self.list = self.listWrapper.find('ul:first');
 		}
 
@@ -414,7 +420,7 @@
 
 		// input hidden
 		if (isInsideForm) {
-			self.wrapper.append('<input type="hidden" name="" value="" />');//onchange="'+text2attr(self.onchange)+'" />');
+			//self.wrapper.append('<input type="hidden" name="" value="" />');//onchange="'+text2attr(self.onchange)+'" />');
 		}
 
 		// GET ELEMENTS
@@ -423,19 +429,22 @@
 		self.zone   = self.select.find('div,a');
 		self.option = self.select.find('div:first');
 		self.drop = self.select.find('a:first');
-		self.inputHidden = self.wrapper.find('input[type=hidden]:first');
+		self.originalSelect = self.wrapper.find('select:first');
+		//self.inputHidden = self.wrapper.find('input[type=hidden]:first');
 
 		if (isInsideForm) {
-			self.inputHidden.attr('name',self.obj.name);
-			if (self.obj.id) self.inputHidden.attr('id',self.obj.id+'_hidden');
+			//self.inputHidden.attr('name',self.obj.name);
+			//if (self.obj.id) self.inputHidden.attr('id',self.obj.id+'_hidden');
+			
 			//we need to find a way to detect external change of select value via javascript
-			if (self.inputHidden[0].addEventListener)
+			/*if (self.inputHidden[0].addEventListener)
 			self.inputHidden[0].addEventListener('DOMAttrModified', function (e) {
 				if (callTriggers && e.attrName == 'value') {
 					//working only in Mozilla
 					window.alert(e.attrName);
 				}
 			}, false);
+			*/
 		}
 
 		// EVENTS
@@ -467,21 +476,21 @@
 			self.set($(this));
 			return preventDefault(e);
 		});
-		//cancel href links
+		// cancel href links
 		self.list.find('li a').click(preventDefault);
 
-		//title
+		// title
 		if (self.obj.title !== "") { setText(self.obj.title); }
 
-		// ADJUST LAYOUT (WIDTHS)
-		layout();
+		// djust layout (WIDTHS)
+		layoutController();
 
-		// CUSTOM SCROLL
+		// custom scroll
 		if (settings.customScroll) {
 			customScroll();
 		}
 
-		// INITIAL STATE
+		// initial state
 		self.close(1);
 
 		// set selected item
@@ -496,7 +505,7 @@
 				self.set(self.list.find('li a').closest('li').first());
 		}
 
-		// CALLBACK
+		// callback
 		if (typeof callback == 'function') { callback.apply(self); }
 
 		//enable triggers
@@ -534,9 +543,11 @@
 		this.each(function (){
 			var sel = $(this);
 			var obj = sel.data('droplist');
+			var instance = null;
+			
 			if (obj) {
 				// return early if this obj already has a plugin instance
-				if (obj !== 1) {
+				if (obj !== true) {
 					// return plugin instance $('.droplist').droplist().setValue(xxx)
 					newDiv = obj;
 					return false;
@@ -544,11 +555,14 @@
 				//continue to next object to find/create
 				return true;
 			}
-			var instance = new DropList(this, settings, callback);
-			sel.data('droplist', 1);
+			//sel.data('droplist', instance);
+			
+			instance = new DropList(this, settings, callback);
+			sel.data('droplist', true);
 
 			//external data access, ex: $('.droplist').data('droplist').setValue(xxx);
 			instance.wrapper.data('droplist', instance);
+			
 			//$.extend(instance.wrapper,instance);
 			$.merge(newDiv,instance.wrapper);
 		});
