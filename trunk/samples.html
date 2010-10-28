@@ -39,7 +39,7 @@
 		
 		<div class="sample">
 			<h2>Disabled</h2>
-			<ul class="droplist droplist-by-list disabled">
+			<ul class="droplist droplist-by-list droplist-disabled">
 				<li><a href="http://www.google.com">Google</a></li>
 				<li><a href="http://www.yahoo.com">Yahoo</a></li>
 				<li><a href="http://www.ask.com">Ask</a></li>
@@ -127,8 +127,8 @@
 		<hr />
 		
 		<div class="sample">
-			<h2>Listener "droplistchange"</h2>
-			<ul class="droplist droplist-by-list-onchange">
+			<h2>Listener "change.droplist"</h2>
+			<ul class="droplist droplist-by-list-change">
 				<li><a href="http://www.google.com">Google</a></li>
 				<li><a href="http://www.yahoo.com">Yahoo</a></li>
 				<li><a href="http://www.ask.com">Ask</a></li>
@@ -147,10 +147,10 @@
 				<li><a href="#ctn-bing">Bing</a></li>
 			</ul>
 			<div class="tabs">
-				<div id="ctn-google" class="hide">Google search is a web search engine owned by Google Inc. and is the most-used search engine on the Web.</div>
-				<div id="ctn-yahoo" class="hide">Yahoo! Inc. is an American public corporation headquartered in Sunnyvale, California, (in Silicon Valley), that provides Internet services.</div>
-				<div id="ctn-ask" class="hide">Ask.com (or Ask Jeeves in the United Kingdom) is a search engine started in 1996 by Garrett Gruener and David Warthen in Berkeley, California.</div>
-				<div id="ctn-bing" class="hide">Bing (formerly Live Search, Windows Live Search, and MSN Search) is the current web search engine from Microsoft.</div>
+				<div id="ctn-google" style="display:none;">Google search is a web search engine owned by Google Inc. and is the most-used search engine on the Web.</div>
+				<div id="ctn-yahoo" style="display:none;">Yahoo! Inc. is an American public corporation headquartered in Sunnyvale, California, (in Silicon Valley), that provides Internet services.</div>
+				<div id="ctn-ask" style="display:none;">Ask.com (or Ask Jeeves in the United Kingdom) is a search engine started in 1996 by Garrett Gruener and David Warthen in Berkeley, California.</div>
+				<div id="ctn-bing" style="display:none;">Bing (formerly Live Search, Windows Live Search, and MSN Search) is the current web search engine from Microsoft.</div>
 			</div>
 		</div>
 
@@ -229,7 +229,7 @@
 			<h2>Disabled</h2>
 			<form method="get" action="">
 				<fieldset>
-					<select name="comboName" class="droplist droplist-by-select disabled">
+					<select name="comboName" class="droplist droplist-by-select droplist-disabled">
 						<option value="0">Google</option>
 						<option value="1">Yahoo</option>
 						<option value="2">Ask</option>
@@ -338,10 +338,10 @@
 		<hr />
 		
 		<div class="sample">
-			<h2>Listener "droplistchange"</h2>
+			<h2>Listener "change.droplist"</h2>
 			<form method="get" action="">
 				<fieldset>
-					<select name="comboName" class="droplist droplist-by-select-onchange">
+					<select name="comboName" class="droplist droplist-by-select-change">
 						<option value="www.google.com">Google</option>
 						<option value="www.yahoo.com">Yahoo</option>
 						<option value="www.ask.com">Ask</option>

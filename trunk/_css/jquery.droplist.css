@@ -27,8 +27,8 @@
 	outline:none; text-indent:-9999px;
 }
 
-.disabled .droplist-value div    {background-position: 0px   0px; cursor: ''; color: silver; }
-.disabled .droplist-value a.nogo {background-position: 0px -66px; cursor: ''; }
+.droplist-disabled .droplist-value div    {background-position: 0px   0px; cursor: ''; color: silver; }
+.droplist-disabled .droplist-value a.nogo {background-position: 0px -66px; cursor: ''; }
 
 .droplist-active { z-index:999; }
 .droplist-active div { background-position:0 -44px !important; outline:none; }

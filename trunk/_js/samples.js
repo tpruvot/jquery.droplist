@@ -1,55 +1,55 @@
-jQuery(document).ready(samples);
-
-function samples() {
+var samples = function () {
 
 	if (typeof(console) != 'undefined')
 		jQuery.error = console.error;
 	else
 		console = {log: function(s){} };
 
-	// GENERIC CONFIGURATION
+	// generic settings
 	var settings = {
 		autoresize: false,
 		customScroll: true,
 		height: 150
-	}
+	};
 
-	// BY SELECT
+	// by select
 	var collect = jQuery('select.droplist-by-select').droplist(settings);
 	//console.log(collect);
 	
-	// BY LIST
+	// ly list
 	jQuery('.droplist-by-list').droplist(settings, function() {
 		var that = this;
 		that.list.find('li a').closest('li').bind('click', function(e) {
 			console.log(this);
 			that.set(this);
+			that.close();
 			console.log(that);
 			return false;
 		});
 	});
 	
-	// BY LIST -  TABS
+	// ly list - tabs
 	jQuery('.droplist-by-list-tabs').droplist(settings, function() {
 		this.tabs();
 	});
 	
-	// BY LIST - DROPLISTCHANGE
-	jQuery('.droplist-by-list-onchange').droplist(settings, function() {
+	// by list - onchange
+	jQuery('.droplist-by-list-change').droplist(settings, function() {
 		var that = this;
 		that.list.find('a').bind('click', function() {
-			var item = $(this).parent();
+			var item = jQuery(this).parent();
 			that.set(item);
+			that.close();
 			return false;
 		});
-	}).bind('droplistchange', function() {
-		var val = $(this).data('droplist').get();
+	}).bind('change.droplist', function() {
+		var val = jQuery(this).data('droplist').get();
 		alert('changed to ' + val);
 	});
 	
-	// BY SELECT - COMBOBOXCHANGE
-	jQuery('.droplist-by-select-onchange').droplist(settings).bind('droplistchange', function() {
-		var val = $(this).data('droplist').get();
+	// by select - onchange
+	jQuery('.droplist-by-select-change').droplist(settings).bind('change.droplist', function() {
+		var val = jQuery(this).data('droplist').get();
 		alert('changed to ' + val);
 	});
 	
@@ -59,3 +59,5 @@ function samples() {
 	//console.log(single);
 	
 };
+
+jQuery(document).ready(samples);

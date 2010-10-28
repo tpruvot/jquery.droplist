@@ -12,6 +12,16 @@
 
 CHANGELOG :
 
+v1.2 by tanguy.pruvot@gmail.com (28 Oct 2010) :
+ * renamed $ to jQuery, self to droplist
+ + merged some changes from alex's 0.4 version (r27)
+   + open and close triggers
+   + namespace
+   + label click
+   * renamed droplistchange trigger to "change"
+   * renamed disabled class to droplist-disabled
+   * input hidden removed, use original select
+
 v1.1 by tanguy.pruvot@gmail.com (19 Sep 2010) :
  + IE9 public beta compatible
  * fixes for css width/height
