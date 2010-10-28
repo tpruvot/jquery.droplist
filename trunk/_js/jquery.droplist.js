@@ -31,7 +31,7 @@
 */
 (function ($) {
 
-	var DropList = function (element, options, callback) {
+	var DropList = function (element, _settings, callback) {
 
 		var me = this,
 			isInsideForm = false,
@@ -41,10 +41,10 @@
 
 			// SETTINGS
 			// ==============================================================================
-		
-			defaults = { 
-				'direction': 'auto', 
-				'customScroll': true, 
+
+			defaults = {
+				'direction': 'auto',
+				'customScroll': true,
 				'autoresize' : false,
 				'slide': true,
 				'width': null,
@@ -55,29 +55,32 @@
 					clickout: 'droplistClickout'
 				}
 			},
-		
-			settings = jQuery.extend({}, defaults, options);
-		
+
+			settings = jQuery.extend({}, defaults, _settings || {});
+
 		if (settings.width !== null) {
 			settings.autoresize = false;
 		}
 
+
 		// PRIVATE METHODS
 		// ==============================================================================
 
-		function setText(str) {
+		var setText = function (str) {
 			me.option.html(text2html(str));
-		}
+		};
 
-		function customScroll() {
+		var customScroll = function () {
 			var h1 = settings.height,
-				h2 = me.dropdown.innerHeight();
+				h2 = me.dropdown.height();
 			if (h2 > h1) {
-				me.list.css('height', h1 + 'px').jScrollPane({showArrows:false});
+				me.list.css('height', h1 + 'px').jScrollPane({
+					showArrows:false
+				});
 			}
-		}
+		};
 
-		function layoutController() {
+		var layoutController = function () {
 			//dropdown visible at this state, we can get padding widths;
 			wx_lst = me.dropdown.outerWidth() - me.dropdown.width();
 			wx_opt = me.option.outerWidth() - me.option.width();
@@ -91,37 +94,51 @@
 				me.drop.css('float','left');
 				me.option.width(settings.width - me.drop.outerWidth() - wx_opt - wx_drp);
 			}
-		}
+		};
 
 		var text2html = function (data) {
 			//fix incorrect chars in possible values
 			return data.replace("<","&lt;").replace(">","&gt;");
-		}
-		
+		};
+
 		var text2js = function (data) {
 			//fix incorrect quote in possible values
 			data = (data !== null) ? data : '';
 			return data.replace("'","\'");
-		}
-		
+		};
+
 		var text2attr = function (data) {
 			//fix incorrect dbquote in attr value
 			data = (data !== null) ? data : '';
 			return data.replace('"','\"');
-		}
-		
+		};
+
 		var options2list = function (data) {
 			var output = '<ul>';
 			data.each(function () {
 				var selected = jQuery(this).attr('selected') ? 'selected' : '';
-				selected += (jQuery(this).attr('class') || '');
+				selected += ' ' + (jQuery(this).attr('class') || '');
 				if (!!jQuery(this).attr('disabled'))
-					output += '<li class="'+selected+' "><span class="disabled">' + text2html(jQuery(this).text()) + '<span></li>\t';
+					output += '<li class="'+selected+'"><span class="disabled">' + text2html(jQuery(this).text()) + '<span></li>\t';
 				else
-					output += '<li class="'+selected+' "><a href="' + jQuery(this).val() +'">' + text2html(jQuery(this).text()) + '</a></li>\t';
+					output += '<li class="'+selected+'"><a href="' + jQuery(this).val() +'">' + text2html(jQuery(this).text()) + '</a></li>\t';
 			});
 			output += '</ul>';
 			return output;
+		};
+
+		var setInitialTitle = function () {
+			if (me.obj.title !== '') {
+				setText(me.obj.title);
+			}
+		};
+
+		var setInitialSelected = function () {
+			var selectedItem = me.list.find('.selected');
+			if (selectedItem.length === 1)
+				me.set(selectedItem);
+			else
+				me.set(me.list.find('li a').closest('li').first());
 		};
 
 
@@ -298,7 +315,7 @@
 				}
 
 			});
-			
+
 			me.obj.trigger('open.' + settings.namespaces.droplist, me);
 
 		};
@@ -310,7 +327,7 @@
 				me.dropdown.slideUp(40);
 			else
 				me.dropdown.hide();
-			
+
 			me.obj.trigger('close.' + settings.namespaces.droplist, me);
 		};
 
@@ -349,7 +366,7 @@
 			} else {
 				me.option.width(settings.width - me.drop.outerWidth() - wx_opt - wx_drp);
 			}
-			
+
 			if (me.callTriggers) {
 				if (me.onchange) {
 					//set "this.value"
@@ -396,7 +413,7 @@
 		me.obj.width = me.obj.outerWidth();
 		settings.width = settings.width || me.obj.width;
 		me.onchange = me.obj[0].getAttribute('onchange');
-		
+
 		var isDisabled = (me.obj.attr('disabled') == true);
 		if (isDisabled) {
 			me.obj.classname += ' droplist-disabled';
@@ -418,7 +435,7 @@
 				select = me.dropdown.find('select:first'),
 				optgroups = select.find('optgroup'),
 				options;
-			
+
 			if (optgroups.length > 0) {
 				html += '<ul>';
 				optgroups.each(function () {
@@ -430,12 +447,12 @@
 				options = me.dropdown.find('select:first option');
 				html += options2list(options);
 			}
-			
+
 			me.dropdown.append(html);
-			
+
 			// override list
 			me.list = me.dropdown.find('ul:first');
-			
+
 		}
 
 		// insert HTML into the wrapper
@@ -466,7 +483,7 @@
 		// ==============================================================================
 
 		jQuery.event.copy(me.obj,me.wrapper);
-		
+
 		// null function to prevent browser default events
 		function preventDefault (e) {
 			e.preventDefault();
@@ -495,9 +512,7 @@
 		// cancel href links
 		me.list.find('li a').click(preventDefault);
 
-		// title
-		if (me.obj.title !== "") { setText(me.obj.title); }
-		
+
 		// label correlation
 		if (me.obj.id) {
 			me.wrapper.parents('form').find('label[for="' + me.obj.id + '"]').click( function () {
@@ -514,6 +529,7 @@
 		}
 
 		// initial state
+		setInitialTitle();
 		me.close(1);
 
 		// set selected item
@@ -521,11 +537,7 @@
 			me.setValue(settings.selected);
 		}
 		else if (! me.obj.title) {
-			var selectedItem = me.list.find('.selected');
-			if (selectedItem.length === 1)
-				me.set(selectedItem);
-			else
-				me.set(me.list.find('li a').closest('li').first());
+			setInitialSelected();
 		}
 
 		// callback
@@ -533,7 +545,7 @@
 
 		//enable triggers
 		me.callTriggers = true;
-		
+
 		me.wrapper.data('instanced', true);
 		return me;
 
@@ -552,9 +564,9 @@
 	jQuery.event.copy = function(from, to) {
 		from = (from.jquery) ? from : jQuery(from);
 		to   = (to.jquery)   ? to   : jQuery(to);
-		
+
 		if (!from.size() || !from[0].events || !to.size()) return;
-			
+
 		var events = from[0].events;
 		to.each(function() {
 			for (var type in events)
@@ -572,7 +584,7 @@
 			var obj = jQuery(this),
 				instance = null,
 				made = obj.data('droplist');
-			
+
 			if (made) {
 				// return early if this obj already has a plugin instance
 				if (made !== true) {
@@ -588,7 +600,7 @@
 
 			//external data access, ex: $('.droplist').data('droplist').setValue(xxx);
 			instance.wrapper.data('droplist', instance);
-			
+
 			jQuery.merge(res,instance.wrapper);
 		});
 		//substitute select/ul by new div(s)
