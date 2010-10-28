@@ -1,4 +1,4 @@
-/*	jquery.droplist v1.2 by Tanguy Pruvot Rev: $Rev$ $Id$
+/*	jquery.droplist v1.3git by Tanguy Pruvot Rev: $Rev$ $Id$
 
 	29 October 2010 - http://github.com/tpruvot/jquery.droplist
 
@@ -46,6 +46,7 @@
 				'direction': 'auto',
 				'customScroll': true,
 				'autoresize' : false,
+				'showkeys': true,
 				'slide': true,
 				'width': null,
 				'height': 200,
@@ -84,7 +85,7 @@
 			//dropdown visible at this state, we can get padding widths;
 			wx_lst = me.dropdown.outerWidth() - me.dropdown.width();
 			wx_opt = me.option.outerWidth() - me.option.width();
-			wx_drp = me.drop.outerWidth() - me.drop.width();
+			wx_drp = me.dropbtn.outerWidth() - me.dropbtn.width();
 			me.dropdown.width(settings.width - wx_lst);
 			if (!settings.autoresize) {
 				me.wrapper.css('clear','both');
@@ -92,17 +93,36 @@
 					'display':'block',
 					'float':'left'
 				});
-				me.option.width(settings.width - me.drop.outerWidth() - wx_opt - wx_drp);
+				me.option.width(settings.width - me.dropbtn.outerWidth() - wx_opt - wx_drp);
 				me.wrapper.width(settings.width);
 			}
 
-			me.drop.css({
+			me.dropbtn.css({
 				'position':'absolute',
 				'right':'0px'
 			});
 
 		};
 
+		var displayKeys = function (keys) {
+			if (keys == '') return;
+			me.spankeys.html(keys.toLowerCase()+'<span style="text-decoration: blink;">|</span>');
+			me.spankeys.css({
+				'position':'absolute',
+				'top':'3px',
+				'left':'3px',
+				'line-height':'16px',
+				'color':'blue',
+				'background-color':'white',
+				'opacity':'0.95'
+			});
+			me.spankeys.show();
+			clearTimeout(me.showDelay);
+			me.showDelay = setTimeout(function () {
+				me.spankeys.hide();
+			}, 1200);
+		};
+		
 		var text2html = function (data) {
 			//fix incorrect chars in possible values
 			return data.replace("<","&lt;").replace(">","&gt;");
@@ -314,7 +334,8 @@
 
 				}
 
-				me.displayKeys(me.typedKeys);
+				if (settings.showkeys)
+					displayKeys(me.typedKeys);
 
 				if (nextSelection !== null) {
 					me.listItems.removeClass('focused');
@@ -364,16 +385,16 @@
 				me.option.css('width','');
 				me.select.css('display','inline-block');
 				//me.select.width(settings.width);
-				if (me.option.outerWidth() > settings.width - me.drop.outerWidth()) {
+				if (me.option.outerWidth() > settings.width - me.dropbtn.outerWidth()) {
 					//max width to settings
-					me.option.width(settings.width - me.drop.outerWidth() - wx_opt - wx_drp);
+					me.option.width(settings.width - me.dropbtn.outerWidth() - wx_opt - wx_drp);
 				}
-				me.select.width(me.option.outerWidth() + me.drop.outerWidth() + 1);
+				me.select.width(me.option.outerWidth() + me.dropbtn.outerWidth() + 1);
 
 				me.wrapper.css('display','inline-block');
-				me.wrapper.width(me.option.outerWidth() + me.drop.outerWidth());
+				me.wrapper.width(me.option.outerWidth() + me.dropbtn.outerWidth());
 			} else {
-				me.option.width(settings.width - me.drop.outerWidth() - wx_opt - wx_drp);
+				me.option.width(settings.width - me.dropbtn.outerWidth() - wx_opt - wx_drp);
 			}
 
 			if (me.callTriggers) {
@@ -407,24 +428,6 @@
 				e.preventDefault();
 				return false;
 			});
-		};
-
-		me.displayKeys = function (keys) {
-			me.span.text(keys.toLowerCase()+'..');
-			me.span.css({
-				'background-color':'white',
-				'color':'red',
-				'position':'absolute',
-				'top':'3px',
-				'left':'3px',
-				'line-height':'16px',
-				'height':'16px'
-			});
-			me.span.show();
-			clearTimeout(me.showDelay);
-			me.showDelay = setTimeout(function () {
-				me.span.hide();
-			}, 1200);
 		};
 
 		// CONTROLLER
@@ -489,23 +492,24 @@
 		me.select = me.wrapper.find('.droplist-value:first');
 		me.zone   = me.select.find('div,a');
 		me.option = me.select.find('div:first');
-		me.drop = me.select.find('a:first');
-		me.span = me.select.find('span:last');
+		me.dropbtn = me.select.find('a:first');
+		me.spankeys = me.select.find('span:last');
 		
 		me.originalSelect = me.wrapper.find('select:first');
 		me.originalSelect.hide(); //in css but..
 
+		/*
 		if (isInsideForm) {
 			//we need to find a way to detect external change of select value via javascript
-			/*if (me.originalSelect[0].addEventListener)
+			if (me.originalSelect[0].addEventListener)
 			me.originalSelect[0].addEventListener('DOMAttrModified', function (e) {
 				if (callTriggers && e.attrName == 'value') {
 					//working only in Mozilla
 					window.alert(e.attrName);
 				}
 			}, false);
-			*/
 		}
+		*/
 
 		// EVENTS
 		// ==============================================================================
@@ -530,7 +534,7 @@
 			});
 		}
 		// cancel href #nogo jump
-		//me.drop.click(preventDefault);
+		//me.dropbtn.click(preventDefault);
 
 		// clicking on an option inside a form
 		me.list.find('li a').closest('li').click( function (e) {
@@ -544,7 +548,7 @@
 		// label correlation
 		if (me.obj.id) {
 			me.wrapper.parents('form').find('label[for="' + me.obj.id + '"]').click( function () {
-				me.drop.focus();
+				me.dropbtn.focus();
 			});
 		}
 

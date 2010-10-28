@@ -43,7 +43,7 @@
 .droplist .droplist-list ul li span { display:block; padding:1px; }
 .droplist .droplist-list ul li span.disabled { color: silver; cursor: default; }
 .droplist .droplist-list ul li a  { display:block; padding:1px; color:#47423A; text-decoration:none; }
-.droplist .droplist-list ul li a:hover {color:#6688EE; }
+.droplist .droplist-list ul li a:hover {color:#4466AA; }
 .droplist .droplist-list ul li ul li a { padding:1px 10px 2px 20px; }
 .droplist .droplist-list ul li.selected {background-color: #f0f0f0; }
 .droplist .droplist-list ul li.focused a {color:#6688EE; }

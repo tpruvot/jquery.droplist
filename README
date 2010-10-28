@@ -12,10 +12,13 @@
 
 CHANGELOG :
 
+v1.3
+ + showkeys option and blinking caret
+
 v1.2 by tanguy.pruvot@gmail.com (29 Oct 2010) :
  + show typed keys
  * moved drop button inside "value" div (absolute)
- * renamed $ to jQuery, self to droplist
+ * renamed $ to jQuery, self to "me"
  + merged some changes from alex's 0.4 version (r28)
    + open and close triggers
    + namespace
