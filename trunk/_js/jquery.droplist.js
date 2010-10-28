@@ -1,6 +1,6 @@
 /*	jquery.droplist v1.2 by Tanguy Pruvot Rev: $Rev$ $Id$
 
-	28 October 2010 - http://github.com/tpruvot/jquery.droplist
+	29 October 2010 - http://github.com/tpruvot/jquery.droplist
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -88,12 +88,19 @@
 			me.dropdown.width(settings.width - wx_lst);
 			if (!settings.autoresize) {
 				me.wrapper.css('clear','both');
-				me.option.css('display','block');
-				me.option.css('float','left');
-				me.drop.css('display','block');
-				me.drop.css('float','left');
+				me.option.css({
+					'display':'block',
+					'float':'left'
+				});
 				me.option.width(settings.width - me.drop.outerWidth() - wx_opt - wx_drp);
+				me.wrapper.width(settings.width);
 			}
+
+			me.drop.css({
+				'position':'absolute',
+				'right':'0px'
+			});
+
 		};
 
 		var text2html = function (data) {
@@ -254,7 +261,7 @@
 						clearTimeout(me.typeDelay);
 						me.typeDelay = setTimeout(function () {
 							me.typedKeys = '';
-						}, 800);
+						}, 1200);
 						me.listItems.slice(searchFrom).each(function () {
 							var link = jQuery(this).find('>a');
 							if (link.text().toUpperCase().indexOf(me.typedKeys) === 0) {
@@ -306,6 +313,8 @@
 					}
 
 				}
+
+				me.displayKeys(me.typedKeys);
 
 				if (nextSelection !== null) {
 					me.listItems.removeClass('focused');
@@ -400,6 +409,23 @@
 			});
 		};
 
+		me.displayKeys = function (keys) {
+			me.span.text(keys.toLowerCase()+'..');
+			me.span.css({
+				'background-color':'white',
+				'color':'red',
+				'position':'absolute',
+				'top':'3px',
+				'left':'3px',
+				'line-height':'16px',
+				'height':'16px'
+			});
+			me.span.show();
+			clearTimeout(me.showDelay);
+			me.showDelay = setTimeout(function () {
+				me.span.hide();
+			}, 1200);
+		};
 
 		// CONTROLLER
 		// ==============================================================================
@@ -456,7 +482,7 @@
 		}
 
 		// insert HTML into the wrapper
-		me.wrapper.prepend('<div class="droplist-value"><div></div><a class="nogo" href="javascript:void(0);"></a></div>');
+		me.wrapper.prepend('<div class="droplist-value"><span style="display:none;"></span><a class="nogo" href="javascript:void(0);"></a><div></div></div>');
 
 		// GET ELEMENTS
 		me.listItems = me.list.find('li a').closest('li');
@@ -464,8 +490,10 @@
 		me.zone   = me.select.find('div,a');
 		me.option = me.select.find('div:first');
 		me.drop = me.select.find('a:first');
+		me.span = me.select.find('span:last');
+		
 		me.originalSelect = me.wrapper.find('select:first');
-		//me.originalSelect.hide(); in css
+		me.originalSelect.hide(); //in css but..
 
 		if (isInsideForm) {
 			//we need to find a way to detect external change of select value via javascript

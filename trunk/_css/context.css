@@ -22,8 +22,8 @@ h1 { font-size:20px; margin:0 0 20px 0; }
 
 /* Boxes */
 
-.col { width:30%; padding:0 0 0 5%; float:left; }
-.col h2, .col label { display:block; margin:0 0 0.5em 0; font-size:12px; font-weight:bold;color:#666; }
+.col { width:20%; float:left; margin:0 50px 0 0; }
+.col h2, .col label { display:block; margin:0 0 0.5em 0; font-size:12px; font-weight:bold; color:#666; }
 .col .droplist { width:300px; }
 /*.col select { width:100%; }
 .col_double { width:100%; float:left; clear:both; }

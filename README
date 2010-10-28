@@ -12,9 +12,11 @@
 
 CHANGELOG :
 
-v1.2 by tanguy.pruvot@gmail.com (28 Oct 2010) :
+v1.2 by tanguy.pruvot@gmail.com (29 Oct 2010) :
+ + show typed keys
+ * moved drop button inside "value" div (absolute)
  * renamed $ to jQuery, self to droplist
- + merged some changes from alex's 0.4 version (r27)
+ + merged some changes from alex's 0.4 version (r28)
    + open and close triggers
    + namespace
    + label click
