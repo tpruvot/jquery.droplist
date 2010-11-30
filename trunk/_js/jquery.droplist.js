@@ -1,6 +1,6 @@
 /*	jquery.droplist v1.3git by Tanguy Pruvot Rev: $Rev$ $Id$
 
-	29 October 2010 - http://github.com/tpruvot/jquery.droplist
+	30 November 2010 - http://github.com/tpruvot/jquery.droplist
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@
 		var me = this,
 			isInsideForm = false,
 			callTriggers = false,
-			wx_opt, wx_drp, wx_lst,
+			wx_opt, wx_drp, wx_lst, wx_border,
 			onchange,
 
 			// SETTINGS
@@ -83,25 +83,31 @@
 
 		var layoutController = function () {
 			//dropdown visible at this state, we can get padding widths;
-			wx_lst = me.dropdown.outerWidth() - me.dropdown.width();
+			wx_lst = me.dropdown.outerWidth() - me.dropdown.innerWidth();
 			wx_opt = me.option.outerWidth() - me.option.width();
-			wx_drp = me.dropbtn.outerWidth() - me.dropbtn.width();
+			wx_drp = me.dropbtn.outerWidth() - me.dropbtn.innerWidth();
+			wx_border = parseInt(me.wrapper.css('borderRightWidth')) * 2;
 			me.dropdown.width(settings.width - wx_lst);
-			if (!settings.autoresize) {
-				me.wrapper.css('clear','both');
-				me.option.css({
-					'display':'block',
-					'float':'left'
-				});
-				me.option.width(settings.width - me.dropbtn.outerWidth() - wx_opt - wx_drp);
-				me.wrapper.width(settings.width);
-			}
+
+			//set container div like a button
+			me.wrapper.css({ 
+				'display':'inline-block',
+				'vertical-align':'bottom'
+			});
 
 			me.dropbtn.css({
 				'position':'absolute',
 				'right':'0px'
 			});
 
+			me.wrapper.css('clear','both');
+			if (!settings.autoresize) {
+				me.option.css({
+					'display':'inline-block'
+				});
+				me.option.width(settings.width - me.dropbtn.width() - wx_opt - wx_drp);
+				me.wrapper.width(settings.width);
+			}
 		};
 
 		var displayKeys = function (keys) {
@@ -380,21 +386,31 @@
 
 			me.close(1);
 
-			//set container width to div + dropdown bt width to prevent dropdown br
+			//set container width to div + dropdown bt width
 			if (settings.autoresize) {
 				me.option.css('width','');
-				me.select.css('display','inline-block');
-				//me.select.width(settings.width);
-				if (me.option.outerWidth() > settings.width - me.dropbtn.outerWidth()) {
+				//me.select.css('width','');
+				me.select.css('overflow-x','');
+				/*
+				if (me.option.width() > settings.maxwidth - me.dropbtn.width() - wx_opt - wx_drp) {
 					//max width to settings
-					me.option.width(settings.width - me.dropbtn.outerWidth() - wx_opt - wx_drp);
+					me.select.css('overflow-x','hidden');
+					me.option.width(settings.maxwidth - me.dropbtn.width() - wx_opt - wx_drp);
+					me.select.width(settings.maxwidth - wx_opt);
+					me.wrapper.width(settings.maxwidth);
 				}
-				me.select.width(me.option.outerWidth() + me.dropbtn.outerWidth() + 1);
+				me.select.width(me.wrapper.width() + me.dropbtn.width() + wx_lst + 1);
+				*/
 
-				me.wrapper.css('display','inline-block');
-				me.wrapper.width(me.option.outerWidth() + me.dropbtn.outerWidth());
+				//me.wrapper.css('display','inline-block');
+				me.wrapper.width(me.option.width() + me.dropbtn.width() + wx_opt + wx_drp);
 			} else {
-				me.option.width(settings.width - me.dropbtn.outerWidth() - wx_opt - wx_drp);
+				me.option.width(settings.width - me.dropbtn.width() - wx_opt - wx_drp);
+			}
+			
+			//set list minwidth to object width
+			if (me.dropdown.width() - wx_border < me.wrapper.width()) {
+				me.dropdown.width(me.wrapper.width() - wx_border);
 			}
 
 			if (me.callTriggers) {
@@ -552,6 +568,9 @@
 			});
 		}
 
+		// initial state
+		setInitialTitle();
+
 		// adjust layout (WIDTHS)
 		layoutController();
 
@@ -560,8 +579,6 @@
 			customScroll();
 		}
 
-		// initial state
-		setInitialTitle();
 		me.close(1);
 
 		// set selected item
