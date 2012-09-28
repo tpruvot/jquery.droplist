@@ -1,4 +1,4 @@
-/*	jquery.droplist v1.5git by Tanguy Pruvot Rev: $Rev$ $Id$
+/*	jquery.droplist v1.6git by Tanguy Pruvot Rev: $Rev$ $Id$
 
 	28 September 2012 - http://github.com/tpruvot/jquery.droplist
 
@@ -476,24 +476,25 @@
 		// case it's a SELECT tag, not a UL
 		if (me.list.length === 0) {
 			isInsideForm = true;
-			var html = '',
+			var htmOpts = '',
 				select = me.dropdown.find('select:first'),
 				optgroups = select.find('optgroup'),
 				options;
 
 			if (optgroups.length > 0) {
-				html += '<ul>';
+				htmOpts += '<ul>';
 				optgroups.each(function () {
 					options = jQuery(this).find('option');
-					html += '<li><strong>' + jQuery(this).attr('label') + '</strong>' + options2list(options) + '</li>';
+					htmOpts += '<li><strong>' + jQuery(this).attr('label') + '</strong>' + options2list(options) + '</li>';
 				});
-				html += '</ul>';
+				htmOpts += '</ul>';
 			} else {
 				options = me.dropdown.find('select:first option');
-				html += options2list(options);
+				htmOpts += options2list(options);
 			}
 
-			me.dropdown.append(html);
+			// like append() bug in IE8
+			me.dropdown.get(0).innerHTML += htmOpts;
 
 			// override list
 			me.list = me.dropdown.find('ul:first');
