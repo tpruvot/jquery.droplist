@@ -1,6 +1,6 @@
-/*	jquery.droplist v1.6git by Tanguy Pruvot Rev: $Rev$ $Id$
+/*	jquery.droplist v1.7git by Tanguy Pruvot Rev: $Rev$ $Id$
 
-	28 September 2012 - http://github.com/tpruvot/jquery.droplist
+	29 September 2012 - http://github.com/tpruvot/jquery.droplist
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -154,9 +154,9 @@
 				var selected = jQuery(this).attr('selected') ? 'selected' : '';
 				selected += ' ' + (jQuery(this).attr('class') || '');
 				if (!!jQuery(this).attr('disabled'))
-					output += '<li class="'+selected+'"><span class="disabled">' + text2html(jQuery(this).text()) + '<span></li>\t';
+					output += '<li class="'+selected.trim()+'"><span class="disabled">' + text2html(jQuery(this).text()) + '<span></li>\t';
 				else
-					output += '<li class="'+selected+'"><a href="' + jQuery(this).val() +'">' + text2html(jQuery(this).text()) + '</a></li>\t';
+					output += '<li class="'+selected.trim()+'"><a href="' + jQuery(this).val() +'">' + text2html(jQuery(this).text()) + '</a></li>\t';
 			});
 			output += '</ul>';
 			return output;
@@ -383,7 +383,15 @@
 
 			setText(str);
 			if (me.originalSelect.length > 0) {
-				me.originalSelect.find("option[value$='" + val + "']").attr('selected', 'selected');
+				me.originalSelect.find("option:selected").removeAttr('selected');
+				me.originalSelect.find("option[value='" + val + "']").attr('selected', 'selected');
+				if (me.originalSelect.find("option:selected").length == 0) {
+					me.originalSelect.find("option").each(function() {
+						if (this.value==val)
+							jQuery(this).attr('selected', 'selected');
+					});
+				}
+				//me.originalSelect.find("option[value$='" + val + "']").attr('selected', 'selected');
 			}
 
 			me.close(1);
@@ -455,10 +463,10 @@
 		me.obj = jQuery(element);
 		me.obj.css('border','none');
 		me.obj.id = me.obj.attr('id');
-		me.obj.classname = me.obj.attr('class');
+		me.obj.classname = me.obj.attr('class') || '';
 		me.obj.name = me.obj.attr('name');
 		me.obj.title = me.obj.attr('title') || '';
-		me.obj.width = me.obj.outerWidth();
+		me.obj.width = me.obj.attr('width') ? (0 + me.obj.attr('width')) : me.obj.outerWidth();
 		settings.width = settings.width || me.obj.width;
 		me.onchange = me.obj[0].getAttribute('onchange');
 
