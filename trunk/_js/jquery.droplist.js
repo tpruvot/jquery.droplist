@@ -86,6 +86,8 @@
 			wx_lst = me.dropdown.outerWidth() - me.dropdown.innerWidth();
 			wx_opt = me.option.outerWidth() - me.option.width();
 			wx_drp = me.dropbtn.outerWidth() - me.dropbtn.innerWidth();
+			//wx_drp = me.dropbtn.outerWidth() - me.dropbtn.width();
+			//wx_lst = me.dropdown.outerWidth() - me.dropdown.width();
 			wx_border = parseInt(me.wrapper.css('borderRightWidth')) * 2;
 			me.dropdown.width(settings.width - wx_lst);
 
@@ -407,10 +409,11 @@
 			} else {
 				me.option.width(settings.width - me.dropbtn.width() - wx_opt - wx_drp);
 			}
-			
-			//set list minwidth to object width
+
+			// set list minwidth to object width
 			if (me.dropdown.width() - wx_border < me.wrapper.width()) {
-				me.dropdown.width(me.wrapper.width() - wx_border);
+				// fixme: check with different styles
+				me.dropdown.width(me.wrapper.width() - wx_opt + wx_lst - 1);
 			}
 
 			if (me.callTriggers) {

@@ -64,7 +64,7 @@ div.droplist h4 { margin:0; padding:0; color: #333; font-size: 12px;}
  * may not operate correctly without them.
  */
 .jspContainer { position:relative; overflow:hidden; z-index:2000; }
-/*.jspTrack { position:absolute; cursor:pointer; right:0; top:0; height:100%; background:#f0f0f0; width:2px !important; right:2px; }*/
+.jspTrack { position:absolute; cursor:pointer; right:0; top:0; height:100%; background:#f0f0f0; width:3px !important; right:3px; }
 .jspDrag { position:absolute; background:gray; cursor:pointer; overflow:hidden; width:6px !important; margin-left:-2px; }
 .jspContainer ul, .droplist .droplist-list ul { margin: 0; padding: 0; -webkit-padding-start: 0; }
 
