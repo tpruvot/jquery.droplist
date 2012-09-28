@@ -58,6 +58,7 @@ var samples = function () {
 	var single = jQuery('.droplist-by-select-autoresize').droplist({autoresize:true});
 	//console.log(single);
 	
+	jQuery('.droplist-by-select-in-tabs').droplist();
 };
 
 jQuery(document).ready(samples);

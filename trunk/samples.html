@@ -11,6 +11,12 @@
 	
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script> -->
+
+	<link rel="stylesheet" href="http://jquery-ui.googlecode.com/svn/tags/1.8.23/themes/base/jquery.ui.all.css" type="text/css" />
+	<script type="text/javascript" src="http://jquery-ui.googlecode.com/svn/tags/1.8.23/ui/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="http://jquery-ui.googlecode.com/svn/tags/1.8.23/ui/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="http://jquery-ui.googlecode.com/svn/tags/1.8.23/ui/jquery.ui.tabs.js"></script>
+
 	<script type="text/javascript" charset="utf-8" src="_js/jquery.mousewheel.js"></script>
 	<script type="text/javascript" charset="utf-8" src="_js/jquery.jScrollPane.js"></script>
 	<script type="text/javascript" charset="utf-8" src="_js/jquery.droplist.js"></script>
@@ -21,7 +27,7 @@
 
 	<div class="col">
 	
-		<h1>Using lists</h1>
+		<h1>Using lists &lt;li&gt;..&lt;/li&gt; sets</h1>
 
 		<div class="sample">
 			<h2>Simple</h2>
@@ -203,7 +209,7 @@
 	
 	<div class="col">
 	
-		<h1>Using forms</h1>
+		<h1>Using form's &lt;select&gt; boxes</h1>
 		
 		<hr />
 
@@ -341,7 +347,7 @@
 			<h2>Listener "change.droplist"</h2>
 			<form method="get" action="">
 				<fieldset>
-					<select name="comboName" class="droplist droplist-by-select-change">
+					<select name="searchUrl" class="droplist droplist-by-select-change">
 						<option value="www.google.com">Google</option>
 						<option value="www.yahoo.com">Yahoo</option>
 						<option value="www.ask.com">Ask</option>
@@ -350,14 +356,14 @@
 				</fieldset>
 			</form>
 		</div>
-		
+
 		<hr />
-		
+
 		<div class="sample">
 			<h2>Submit</h2>
 			<form method="get" action="">
 				<fieldset>
-					<select name="comboName" class="droplist droplist-by-select">
+					<select width="250" name="searchUrl" class="droplist-by-select">
 						<option value="www.google.com">Google</option>
 						<option value="www.yahoo.com">Yahoo</option>
 						<option value="www.ask.com">Ask</option>
@@ -367,9 +373,9 @@
 				</fieldset>
 			</form>
 		</div>
-		
+
 		<hr />
-		
+
 		<div class="sample">
 			<h2>Sub items (optgroup)</h2>
 			<form method="get" action="">
@@ -387,39 +393,76 @@
 				</fieldset>
 			</form>
 		</div>
-		
-	<h1>Other sizes</h1>
+
+	</div>
 
 	<hr />
 
-	<div class="sample">
-		<h2>Autoresize and onchange event</h2>
-		<select name="autoresize" class="droplist droplist-by-select-autoresize" onchange="alert(this.value);" onblur="alert('blur');">
-			<option value="0">Google</option>
-			<option value="1" selected="selected">Yahoo</option>
-			<option value="2">Ask</option>
-			<option value="3">Bing</option>
-			<option value="4">Long text Long text Long text Long text Long text Long text</option>
+	<div class="col">
+
+		<h1>Other sizes</h1>
+
+		<hr />
+
+		<div class="sample">
+			<h2>Autoresize and onchange event</h2>
+			<select name="autoresize" class="droplist droplist-by-select-autoresize" onchange="alert(this.value);" onblur="alert('blur');">
+				<option value="0">Google</option>
+				<option value="1" selected="selected">Yahoo</option>
+				<option value="2">Ask</option>
+				<option value="3">Bing</option>
+				<option value="4">Long text Long text Long text Long text Long text Long text</option>
+			</select>
+			<button onclick="jQuery('.droplist-by-select-autoresize').droplist().setValue('3');" >Change me</button>
+			<button onclick="jQuery('.droplist-by-select-autoresize').droplist().setValue('2',true);" >With trigger</button>
+		</div>
+
+		<hr />
+
+		<select id="dl200" class="droplist-by-select" title="fixed width to 200px" style="width:200px;">
+			<option value="www.google.com">Google</option>
+			<option value="www.yahoo.com">Yahoo</option>
+			<option value="www.ask.com">Ask</option>
+			<option value="www.bing.com">Bing</option>
 		</select>
-		<button onclick="jQuery('.droplist-by-select-autoresize').droplist().setValue('3');" >Change me</button>
-		<button onclick="jQuery('.droplist-by-select-autoresize').droplist().setValue('2',true);" >With trigger</button>
-	</div>
-		
-	<hr />
 
-	<select id="dl200" class="droplist-by-select" title="fixed width to 200px" style="width:200px">
-		<option value="www.google.com">Google</option>
-		<option value="www.yahoo.com">Yahoo</option>
-		<option value="www.ask.com">Ask</option>
-		<option value="www.bing.com">Bing</option>
-	</select>
-		
-	<h1 style="margin-top: 20px;">Actions</h1>
-	<button onclick="jQuery('.droplist').each(function () {$(this).data('droplist').setValue(''); });" >Reset All</button>
+		<h1 style="margin-top: 20px;">Actions</h1>
+		<button onclick="jQuery('.droplist').each(function () {$(this).data('droplist').setValue(''); });" >Reset All</button>
+
+		<hr />
+
+		<h1 style="margin-top: 20px;">with jQuery UI</h1>
+
+		<div class="ui-tabs" style="display:none;">
+			<ul>
+			<li><a href="#ui-select" title="select">Droplist</a></li>
+			<li><a href="#ui-selected" title="selected">Selection</a></li>
+			</ul>
+			<div id="ui-select">
+				<div class="sample">
+					<h2>Inside jQuery-UI Tabs</h2>
+					<select class="droplist-by-select-in-tabs" 
+						onchange="$('#ui-selected').html('selected index is '+this.value);">
+						<option value="0">Google</option>
+						<option value="1" selected="selected">Yahoo</option>
+						<option value="2">Ask</option>
+						<option value="3">Bing</option>
+						<option value="4">Long text Long text Long text</option>
+					</select>
+				</div>
+			</div>
+			<div id="ui-selected">
+			</div>
+		</div>
 
 	</div>
-	
 	<script type="text/javascript" charset="utf-8" src="_js/samples.js"></script>
-	
+
+	<script type="text/javascript">
+		jQuery('div.ui-tabs').tabs(
+			// ui-tabs options if any
+		).show();
+	</script>
+
 </body>
 </html>
