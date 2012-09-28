@@ -12,7 +12,11 @@
 
 CHANGELOG :
 
-v1.3
+v1.7 by tanguy.pruvot@gmail.com (29 Sep 2012)
+ * Fixes for recent jQuery versions (dependencies)
+ + allow to set the select width in html without css
+
+v1.3 by tanguy.pruvot@gmail.com
  + showkeys option and blinking caret
 
 v1.2 by tanguy.pruvot@gmail.com (29 Oct 2010) :
