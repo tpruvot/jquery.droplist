@@ -1,6 +1,6 @@
-/*	jquery.droplist v1.3git by Tanguy Pruvot Rev: $Rev$ $Id$
+/*	jquery.droplist v1.5git by Tanguy Pruvot Rev: $Rev$ $Id$
 
-	30 November 2010 - http://github.com/tpruvot/jquery.droplist
+	28 September 2012 - http://github.com/tpruvot/jquery.droplist
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
