@@ -78,6 +78,7 @@
 				me.list.css('height', h1 + 'px').jScrollPane({
 					showArrows:false
 				});
+				me.jspApi = me.list.data('jsp');
 			}
 		};
 
@@ -151,9 +152,9 @@
 		var options2list = function (data) {
 			var output = '<ul>';
 			data.each(function () {
-				var selected = jQuery(this).attr('selected') ? 'selected' : '';
+				var selected = jQuery(this).is(':selected') ? 'selected' : '';
 				selected += ' ' + (jQuery(this).attr('class') || '');
-				if (!!jQuery(this).attr('disabled'))
+				if (jQuery(this).is(':disabled'))
 					output += '<li class="'+selected.trim()+'"><span class="disabled">' + text2html(jQuery(this).text()) + '<span></li>\t';
 				else
 					output += '<li class="'+selected.trim()+'"><a href="' + jQuery(this).val() +'">' + text2html(jQuery(this).text()) + '</a></li>\t';
@@ -348,6 +349,8 @@
 				if (nextSelection !== null) {
 					me.listItems.removeClass('focused');
 					nextSelection.addClass('focused').focus();
+					if (settings.customScroll)
+						me.jspApi.scrollToElement(nextSelection, false, true);
 					e.preventDefault();
 					return false;
 				}
@@ -391,7 +394,6 @@
 							jQuery(this).attr('selected', 'selected');
 					});
 				}
-				//me.originalSelect.find("option[value$='" + val + "']").attr('selected', 'selected');
 			}
 
 			me.close(1);
@@ -470,8 +472,7 @@
 		settings.width = settings.width || me.obj.width;
 		me.onchange = me.obj[0].getAttribute('onchange');
 
-		var isDisabled = (me.obj.attr('disabled') == true);
-		if (isDisabled) {
+		if (me.obj.is(':disabled')) {
 			me.obj.classname += ' droplist-disabled';
 		}
 
